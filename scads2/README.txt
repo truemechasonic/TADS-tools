@@ -1,7 +1,6 @@
 About scads2:
  The scads2 decompiler for TADS2 games was originally created by Ben Rudiak-Gould.
  This update by "truemechasonic" works on more games, and compiles on current software.
- You can find my latest version of scads2 at http://pastebin.com/heWgCJi7
  Ben's release was originally hosted at http://www.darkweb.com/~benrg/if-decompilers/
  Ben's release can still be found through use of the Internet Archive (Wayback Machine).
  Ben's release was last updated on January 31st, 2004.

@@ -1,7 +1,6 @@
 About scads3:
  The scads3 decompiler for TADS3 games was originally created by Ben Rudiak-Gould.
  This update by "truemechasonic" works on more games, and compiles on current software.
- You can find my latest version of scads3 at [TODO]
  Ben's release was originally hosted at http://www.darkweb.com/~benrg/if-decompilers/
  Ben's release can still be found through use of the Internet Archive (Wayback Machine).
  Ben's release was last updated on January 31st, 2004.
