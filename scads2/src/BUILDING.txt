@@ -1,0 +1,13 @@
+Scads2 should build on any platform which supports GHC 6.2 (i.e. Win32 or
+Posix). GHC versions prior to 6.2 will almost work, except that showHex
+will prepend "0x" to hexadecimal numbers, which uglifies the output a bit.
+
+On UNIX platforms you'll probably want to delete the ".exe" from the first
+line of the Makefile.
+
+The Makefile also builds a utility called "decrypt-tads2" which decrypts
+the text in a .gam file. The decrypted file is still playable. I used this
+for debugging, but it's not clear that it's useful any more.
+
+The code is licensed under the GPL, and is Copyright 2004 Ben Rudiak-Gould.
+You can contact me at benrg@darkweb.com.
