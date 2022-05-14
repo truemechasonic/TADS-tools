@@ -89,6 +89,7 @@ decompileValue x = x
 {------------------------- main -------------------------}
 
 main = do
+  E.setLocaleEncoding E.utf8
   mapM_ (putStrLn . ppObject . decompileObject) objects
   mapM_ (putStrLn . ppTadsFunc . decompile) (sort allTopLevelFunctions)
 
