@@ -6,7 +6,7 @@ ifeq ($(OS),Windows_NT)
     cleancommand := del /F /Q objects\* scads3$(EXE) decrypt-tads3$(EXE)
     EXE = .exe
 else
-    cleancommand := rm -f objects/* scads3$(EXE) decrypt-tads3$(EXE)
+    cleancommand := rm -rf objects/ scads3$(EXE) decrypt-tads3$(EXE)
 endif
 
 all : objects scads3$(EXE) decrypt-tads3$(EXE)
