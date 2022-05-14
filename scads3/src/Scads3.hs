@@ -18,7 +18,7 @@ You can read the GNU General Public License at this URL:
 -}
 
 
-module Main () where
+module Main (main) where
 
 import Scads3_types
 import Scads3_disasm
