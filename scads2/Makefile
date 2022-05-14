@@ -1,9 +1,10 @@
-EXE = .exe
+EXE =
 CFLAGS = -O2
 HFLAGS = -O -fno-warn-tabs
 
 ifeq ($(OS),Windows_NT)
     cleancommand := del /F /Q objects\* scads2$(EXE) decrypt-tads2$(EXE)
+    EXE = .exe
 else
     cleancommand := rm -f objects/* scads2$(EXE) decrypt-tads2$(EXE)
 endif
