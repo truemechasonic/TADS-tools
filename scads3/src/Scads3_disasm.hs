@@ -233,7 +233,7 @@ opcodes =
   (0x0E,("MAKELSTPAR",	[],				\_ -> [MAKELSTPAR])),
 
   (0x0F,("PUSHENUM",	[("val",int4)],	\[n] -> [pushV (ENUM n)])),
-
+  
   (0x20,("NEG",		[],	\_ -> [UNARY "-"])),
   (0x21,("BNOT",	[],	\_ -> [UNARY "~"])),
   (0x22,("ADD",		[],	\_ -> [BINARY (" + ",12)])),
@@ -260,6 +260,8 @@ opcodes =
   (0x51,("RETNIL",	[],	\_ -> [pushC "nil", RETVAL])),
   (0x52,("RETTRUE",	[],	\_ -> [pushC "true", RETVAL])),
   (0x54,("RET",		[],	\_ -> [PUSHR0, RETVAL])),
+  
+  (0x56,("NAMEDARGPTR",		[("arg_count",ubyte),("table_offset",uint2)],	\[argc,off]  -> [pushC "TODO", pushC "NAMEDARGPTR", SET])), --TODO
 
   (0x58,("CALL",	[("arg_count",ubyte),("func_offset",uint4)],	\[argc,ofs] -> [pushV (FUNC ofs), CALL argc])),
   (0x59,("PTRCALL",	[("arg_count",ubyte)],				\[argc]     -> [CALL argc])),
@@ -290,7 +292,13 @@ opcodes =
 
   (0x77,("DELEGATE",	[("arg_count",ubyte),("prop_id",uint2)],	\[argc,id]  -> [pushPROP id, CALLPROP "delegated " argc])),
   (0x78,("PTRDELEGATE",	[("arg_count",ubyte)],				\[argc]     -> [CALLPROP "delegated " argc])),
-
+  
+  (0x7b,("SWAPN",	[("idx1",ubyte),("idx2",ubyte)],			\[i1,i2]      -> [pushC "SWAPN", pushC "SWAPN", SET])), --TODO swaps specified stack elements
+  (0x7c,("GETARGN0",	[],	\_ -> [pushV (Arg 0)])),
+  (0x7d,("GETARGN1",	[],	\_ -> [pushV (Arg 1)])),
+  (0x7e,("GETARGN2",	[],	\_ -> [pushV (Arg 2)])),
+  (0x7f,("GETARGN3",	[],	\_ -> [pushV (Arg 3)])),
+  
   (0x80,("GETLCL1",	[("local_number",ubyte)],	\[l] -> [pushV (Local l)])),
   (0x81,("GETLCL2",	[("local_number",uint2)],	\[l] -> [pushV (Local l)])),
   (0x82,("GETARG1",	[("param_number",ubyte)],	\[l] -> [pushV (Arg l)])),
@@ -312,7 +320,7 @@ opcodes =
   (0x8D,("SWAP",	[],	\_ -> [SWAP])),
 
   (0x8E,("PUSHCTXELE",	[("element",ubyte)],	\[e] -> [pushC (nameCtxEle e)])),
-
+  (0x8F,("DUP2",		[],	\_ -> [pushC "DUP2", pushC "DUP2"])), --dupes top two stack elements in order
 --(0x90,("SWITCH",	[("case_count",uint2)])),
 
   (0x91,("JMP",		[("branch_offset",branchOffset)],	\[ofs] -> [JMP ofs])),
@@ -332,7 +340,21 @@ opcodes =
   (0x9F,("JNOTNIL",	[("branch_offset",branchOffset)],	\[ofs] -> [pushC "nil", BINARY (" != ",9), JT ofs])),
   (0xA0,("JR0T",	[("branch_offset",branchOffset)],	\[ofs] -> [PUSHR0, JT ofs])),
   (0xA1,("JR0F",	[("branch_offset",branchOffset)],	\[ofs] -> [PUSHR0, UNARY "!", JT ofs])),
-
+  
+  (0xA2,("ITERNEXT",	[("local_number",uint2), ("branch_offset",branchOffset)],	\[l, ofs] -> [pushC "TODO"])), --TODO
+  
+  (0xA3,("GETSETLCL1R0",	[("local_number",ubyte)],	\[l] -> [pushC "R0", pushV (Local l), SET, PUSHR0])), --TODO not sure about this one
+  (0xA4,("GETSETLCL1",	[("local_number",ubyte)],	\[l] -> [DUP, pushV (Local l), SET])), --TODO not sure about this one
+  (0xA5,("DUPR0",	[],	\_ -> [PUSHR0, PUSHR0])), --TODO not sure about this one
+  (0xA6,("GETSPN",	[],	\_ -> [pushC "TODO"])), --TODO
+  
+  (0xAA,("GETLCLN0",	[],	\_ -> [pushV (Local 0)])),
+  (0xAB,("GETLCLN1",	[],	\_ -> [pushV (Local 1)])),
+  (0xAC,("GETLCLN2",	[],	\_ -> [pushV (Local 2)])),
+  (0xAD,("GETLCLN3",	[],	\_ -> [pushV (Local 3)])),
+  (0xAE,("GETLCLN4",	[],	\_ -> [pushV (Local 4)])),
+  (0xAF,("GETLCLN5",	[],	\_ -> [pushV (Local 5)])),
+  
   (0xB0,("SAY",		[("offset",uint4)],		\[n] -> [pushStringAt n, SAYVAL])),
 
   (0xB1,("BUILTIN_A",	[("argc",ubyte),("func_index",ubyte)],	\[argc,func] -> [pushBUILTIN (0,func), CALL argc])),
@@ -386,8 +408,8 @@ opcodes =
 
   (0xEB,("SETSELF",	[],	\_ -> [pushC "self", SET])),
 
---(0xEC,("LOADCTX",	[])),
---(0xED,("STORECTX",	[])),
+  (0xEC,("LOADCTX",	[],	\_ -> [pushC "ctx_value", SET])), --TODO
+  (0xED,("STORECTX",	[],	\_ -> [pushC "ctx_value"])),  --TODO
 
   (0xEE,("SETLCL1R0",	[("local_number",ubyte)],	\[l] -> [PUSHR0, pushLocal l, SET])),
   (0xEF,("SETINDLCL1I8",[("local_number",ubyte),("index_val",ubyte)],	\[l,i] -> [pushLocal l, pushI i, SETIND, pushLocal l, SET])),
