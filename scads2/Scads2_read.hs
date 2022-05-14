@@ -33,12 +33,13 @@ import Scads2_types
 import Data.Char (chr)
 import Control.Monad (when)
 import Control.Monad.State (get,put,evalState)
+import System.IO.Unsafe (unsafePerformIO)
 import Foreign.C.Types (CInt)
 import Foreign.C.String (CString,withCString)
 import Foreign.Ptr (Ptr,nullPtr,plusPtr)
 import Foreign.Storable (sizeOf,peek,peekElemOff)
 import System.Exit (exitFailure)
-import System.IO.Unsafe (unsafePerformIO)
+
 
 
 readRawFile :: FilePath -> IO DataBlock

@@ -18,7 +18,7 @@ You can read the GNU General Public License at this URL:
 -}
 
 
-module Main (main) where
+module Main () where
 
 import Scads3_types
 import Scads3_disasm
@@ -29,17 +29,15 @@ import Scads3_read
 import Scads3_print
 import Scads3_util
 
-import Data.Array (Array,array,(!))
-import Data.Char (chr,isAlphaNum)
-import Data.List (sort,sortBy)
-import Data.Maybe (isJust,fromJust,fromMaybe,mapMaybe)
+import Array (Array,array,(!))
+import Char (chr,isAlphaNum)
+import List (sort,sortBy)
+import Maybe (isJust,fromJust,fromMaybe,mapMaybe)
 
 import Data.Bits (testBit,(.&.))
 
 import Control.Monad (replicateM)
 import Control.Monad.State (State,get,put,evalState)
-
-import qualified GHC.IO.Encoding as E
 
 
 {------------------------- misc -------------------------}
@@ -89,7 +87,6 @@ decompileValue x = x
 {------------------------- main -------------------------}
 
 main = do
-  E.setLocaleEncoding E.utf8
   mapM_ (putStrLn . ppObject . decompileObject) objects
   mapM_ (putStrLn . ppTadsFunc . decompile) (sort allTopLevelFunctions)
 

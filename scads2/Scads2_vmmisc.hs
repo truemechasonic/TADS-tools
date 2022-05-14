@@ -80,13 +80,6 @@ getTaggedValue 7 = opLIST
 getTaggedValue 8 = return (C "true")
 getTaggedValue 9 = opDSTR
 getTaggedValue 10 = opFUNC
-getTaggedValue 11 = return (C "{{{unknown 11}}}") -- DAT_TPL
-getTaggedValue 12 = return (C "{{{unknown 12}}}")
-getTaggedValue 13 = opPROP
-getTaggedValue 14 = return (C "{{{unknown 14}}}") -- DAT_DEMAND
-getTaggedValue 15 = return (C "{{{unknown 15}}}") -- DAT_SYN
-getTaggedValue 16 = return (C "{{{unknown 16}}}") -- DAT_REDIR
-getTaggedValue 17 = return (C "{{{unknown 17}}}") -- DAT_TPL2
 getTaggedValue _ = return (C "{{{unknown}}}")
 
 

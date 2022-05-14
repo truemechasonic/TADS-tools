@@ -30,11 +30,11 @@ module Scads3_read (
 
 import Scads3_types
 
-import System.Exit (exitFailure)
-import Data.Char (chr)
+import System (exitFailure)
+import Char (chr)
 import Control.Monad (replicateM,when)
 import Control.Monad.State (get,put,evalState)
-import System.IO.Unsafe (unsafePerformIO)
+import Foreign (unsafePerformIO)
 import Foreign.Ptr (Ptr,nullPtr,plusPtr)
 import Foreign.Storable (sizeOf,peek,peekElemOff)
 import Foreign.C.Types (CInt)

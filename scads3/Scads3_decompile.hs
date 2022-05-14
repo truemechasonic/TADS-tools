@@ -26,8 +26,8 @@ import Scads3_disasm
 import Scads3_vmmisc
 import Scads3_util
 
-import Data.List (sort,sortBy)
-import Data.Maybe (fromMaybe)
+import List (sort,sortBy)
+import Maybe (fromMaybe)
 import Control.Monad (liftM)
 import Debug.Trace (trace)
 
