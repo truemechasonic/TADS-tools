@@ -1,18 +1,30 @@
-EXE = #.exe
+EXE = .exe
 CFLAGS = -O2
-HFLAGS = -O
+HFLAGS = -O -fno-warn-tabs
 
-all : scads2$(EXE) decrypt-tads2$(EXE)
+ifeq ($(OS),Windows_NT)
+    cleancommand := del /F /Q objects\* scads2$(EXE) decrypt-tads2$(EXE)
+else
+    cleancommand := rm -f objects/* scads2$(EXE) decrypt-tads2$(EXE)
+endif
 
-Scads2_load.o : Scads2_load.c Scads2_load.h
-	gcc -c ${CFLAGS} $<
+all : objects scads2$(EXE) decrypt-tads2$(EXE)
 
-decrypt-tads2.o : decrypt-tads2.c Scads2_load.h
-	gcc -c ${CFLAGS} $<
+objects : 
+	mkdir objects
 
-scads2$(EXE) : Scads2*.hs Scads2_load.o
-	ghc --make -fglasgow-exts -o $@ ${HFLAGS} Scads2.hs Scads2_load.o
+objects/Scads2_load.o : src/Scads2_load.c src/Scads2_load.h
+	gcc -Isrc/ -c ${CFLAGS} $< -o $@
+
+objects/decrypt-tads2.o : src/decrypt-tads2.c src/Scads2_load.h
+	gcc -Isrc/ -c ${CFLAGS} $< -o $@
+
+scads2$(EXE) : src/Scads2*.hs objects/Scads2_load.o
+	ghc --make -isrc/ -XImplicitParams -outputdir objects -o $@ ${HFLAGS} src/Scads2.hs src/Scads2_load.c src/Scads2_load.h
 	strip $@
 
-decrypt-tads2$(EXE) : decrypt-tads2.o Scads2_load.o
-	gcc -o $@ decrypt-tads2.o Scads2_load.o
+decrypt-tads2$(EXE) : objects/decrypt-tads2.o objects/Scads2_load.o
+	gcc -Isrc/ -o $@ objects/decrypt-tads2.o objects/Scads2_load.o
+
+clean:
+	${cleancommand}

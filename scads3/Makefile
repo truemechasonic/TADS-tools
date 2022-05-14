@@ -1,18 +1,30 @@
 EXE = .exe
-CFLAGS = -O2
-HFLAGS = -O
+CFLAGS = -g -O2
+HFLAGS = -g -O -fno-warn-tabs
 
-all : scads3$(EXE) decrypt-tads3$(EXE)
+ifeq ($(OS),Windows_NT)
+    cleancommand := del /F /Q objects\* scads3$(EXE) decrypt-tads3$(EXE)
+else
+    cleancommand := rm -f objects/* scads3$(EXE) decrypt-tads3$(EXE)
+endif
 
-Scads3_load.o : Scads3_load.c Scads3_load.h
-	gcc -c ${CFLAGS} $<
+all : objects scads3$(EXE) decrypt-tads3$(EXE)
 
-decrypt-tads3.o : decrypt-tads3.c Scads3_load.h
-	gcc -c ${CFLAGS} $<
+objects : 
+	mkdir objects
 
-scads3$(EXE) : Scads3*.hs Scads3_load.o
-	ghc --make -fglasgow-exts -o $@ ${HFLAGS} Scads3.hs Scads3_load.o
+objects/Scads3_load.o : src/Scads3_load.c src/Scads3_load.h
+	gcc -Isrc/ -c ${CFLAGS} $< -o $@
+
+objects/decrypt-tads3.o : src/decrypt-tads3.c src/Scads3_load.h
+	gcc -Isrc/ -c ${CFLAGS} $< -o $@
+
+scads3$(EXE) : src/Scads3*.hs objects/Scads3_load.o
+	ghc --make -isrc/ -XImplicitParams -outputdir objects -o $@ ${HFLAGS} src/Scads3.hs objects/Scads3_load.o
 	strip $@
 
-decrypt-tads3$(EXE) : decrypt-tads3.o Scads3_load.o
-	gcc -o $@ decrypt-tads3.o Scads3_load.o
+decrypt-tads3$(EXE) : objects/decrypt-tads3.o objects/Scads3_load.o
+	gcc -Isrc/ -o $@ objects/decrypt-tads3.o objects/Scads3_load.o
+
+clean:
+	${cleancommand}
