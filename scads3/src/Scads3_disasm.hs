@@ -28,7 +28,7 @@ import Scads3_read
 import Scads3_vmmisc
 import Scads3_util
 
-import Array (Array,accumArray,(!))
+import Data.Array (Array,accumArray,(!))
 import Numeric (showHex)
 import Control.Monad (replicateM)
 import Control.Monad.State (evalState)

@@ -29,15 +29,17 @@ import Scads3_read
 import Scads3_print
 import Scads3_util
 
-import Array (Array,array,(!))
-import Char (chr,isAlphaNum)
-import List (sort,sortBy)
-import Maybe (isJust,fromJust,fromMaybe,mapMaybe)
+import Data.Array (Array,array,(!))
+import Data.Char (chr,isAlphaNum)
+import Data.List (sort,sortBy)
+import Data.Maybe (isJust,fromJust,fromMaybe,mapMaybe)
 
 import Data.Bits (testBit,(.&.))
 
 import Control.Monad (replicateM)
 import Control.Monad.State (State,get,put,evalState)
+
+import qualified GHC.IO.Encoding as E
 
 
 {------------------------- misc -------------------------}

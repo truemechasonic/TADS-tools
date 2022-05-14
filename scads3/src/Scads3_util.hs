@@ -26,7 +26,7 @@ module Scads3_util (
 ) where
 
 
-import List (partition)
+import Data.List (partition)
 
 
 fst3 :: (a,b,c) -> a

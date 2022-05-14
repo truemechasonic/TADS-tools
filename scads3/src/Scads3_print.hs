@@ -30,8 +30,8 @@ import Scads3_read
 import Scads3_vmmisc
 import Scads3_disasm (getDataHolder)
 
-import Char (isAlphaNum,toLower)
-import List (sort)
+import Data.Char (isAlphaNum,toLower)
+import Data.List (sort)
 import Data.Bits (testBit,(.&.))
 import Control.Monad (replicateM)
 import Control.Monad.State (evalState)

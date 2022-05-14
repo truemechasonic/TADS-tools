@@ -37,12 +37,12 @@ import Scads3_util
 
 import Control.Monad (replicateM)
 import Control.Monad.State (evalState,execState,get,put)
-import Foreign (unsafePerformIO)
-import System (getArgs)
-import Maybe (fromMaybe,fromJust,isJust)
+import System.IO.Unsafe (unsafePerformIO)
+import Data.Maybe (fromMaybe,fromJust,isJust)
 import Data.Bits (testBit,(.&.))
-import IO (hPutStrLn,stderr)
-import System (getArgs,exitFailure)
+import System.IO (hPutStrLn,stderr)
+import System.Exit (exitFailure)
+import System.Environment (getArgs)
 
 
 storyFile = unsafePerformIO (readRawFile storyFileName)
