@@ -451,8 +451,8 @@ getSymbolInfo chunks vocab =
               in makeInfo objNames propNames
 
 makeInfo objNames propNames =
-  Info (\n -> fromMaybe ("obj" ++ show n) (lookup n objNames))
-       (\n -> fromMaybe ("prop" ++ show n) (lookup n propNames))
+  Info (\n -> "obj" ++ show n ++ "_" ++ fromMaybe ("") (lookup n objNames))
+       (\n -> "prop" ++ show n ++ "_" ++ fromMaybe ("") (lookup n propNames))
 
 
 ppAll' chunks vocab =
