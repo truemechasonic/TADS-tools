@@ -1,0 +1,43 @@
+Unofficial SD3 Patch - Changelog
+Uo-to-date version at: http://pastebin.com/mC5i5MjQ
+For my other tads2-related nonsense: http://pastebin.com/heWgCJi7
+by truemechasonic
+
+Version 2.00: download at http://www.mediafire.com/download/xjk6gqqdyc22y3o/TADS2patcher_20160514.zip
+  The patcher has been improved, fixing some crashes in the patched game.
+  The patched game is no longer compatible with save files from other versions.
+  (Now comes packaged with some cheat mods for Goblinboy games including SD3.)
+
+Version 1.02: download at http://www.mediafire.com/download/7zivsczy4ac174d/usd3p+v102.zip
+  Bugfix: Tads2patcher can now correctly replace prop usages; fixes Patch 11.
+
+Version 1.01: download at http://www.mediafire.com/download/swags9l7s2n1qpw/usd3p+v101.zip
+  Bugfix: Patch 17 previously broke the walk-date (for each girl). [Patch 17, Patch 17b]
+
+Version 1.00: download at http://www.mediafire.com/download/k6o4yp5ndzg6pap/usd3p_v100.zip
+  Bugfix: Check for Alison Angel bonus point when you see a new pic of her. [Patches 1-10]
+  Bugfix: Use correct variable for whether Alison Angel's magazine pics were seen. [Patch 11]
+  Bugfix: Alison can give oral if she says you can put it in her mouth (behind gym). [Patch 12]
+  Bugfix: Molly is not in classroom after leaving with Gary. [Patch 13]
+  Bugfix: Molly will not pick herself as dare target. [Patch 14]
+  Bugfix: Mrs. Stevens bonus point requires all 9 daydreams instead of 8. [Patch 15]
+  Bugfix: Cannot repeatedly change Molly's love level during walk date. [Patches 16-18]
+  Bugfix: Becky/Molly don't know about Alison if you leave her room without sex. [Patch 19]
+  Bugfix: Can perform (clothed) masturbation in Kirsty's bedroom. [Patch 20]
+  Bugfix: Cannot remove Alison's panties unless she's willing. [Patches 21-22]
+  Bugfix: Cannot remove Alison's panties while her jeans are still worn. [Patch 23]
+  Bugfix: Display picture of Alison with corset if it's worn when you remove her panties. [Patch 24]
+  Bugfix: Becky leaves for school (after 10 turns) on days 2-4. [Patches 25-26]
+  Bugfix: No problems occur when relationship values go above the soft limit of 5. [Patches 27-28]
+  Bugfix: Becky knows you didn't walk with her even if you reach school in < 10 turns. [Patch 29]
+  Bugfix: Becky still thanks you for walking her to school; fixes an issue with Patch 29. [Patch 30]
+  Bugfix: Molly can interrupt closet scene during "Becky, fuck me". [Patch 31]
+  Bugfix: Becky's orgasm from "becky, fuck me" in closet works correctly. [Patch 32]
+  Typofix: various. [Patches typo1-typo117]
+
+Possible fixes for future versions:
+  TO FIX: need to auto-withdraw from alison when you play with Molly during party
+    (Alternatively, don't allow playing with Molly until player withdraws)
+  TO FIX: player can use the name 'Mike' due to an 'if' instead of a 'while'
+  TO FIX: player can use the name 'Gary'
+  TO FIX: There is no command to view all the pictures.

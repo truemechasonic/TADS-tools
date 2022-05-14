@@ -1,0 +1,299 @@
+#Meteor - Cheat Patch
+
+//Set separator character:
+separator ;
+
+//Assertions
+set assert1 hasString ;A car is parked, not far from the dusty road, shrouded in darkness;
+@!assert1 echo Error: Selected game is not Meteor.
+@!assert1 abort
+set assert2 hasString ;cheat mod;
+@assert2 echo Error: Mod must be applied to unmodded game.
+@assert2 abort
+
+//Set variables for later:
+set textonly hascode ;3E 00 DE 00 0d 00;
+@textonly echo Detected text-only version of Meteor. That's probably fine. 
+
+//Object IDs for characters
+@!textonly setshorts me 219
+@textonly setshorts me 222
+@!textonly setshorts laura 316
+@textonly setshorts laura 321
+
+//Some properties
+setshorts prop_canfuck 933
+setshorts prop_cankiss 1212
+
+//Some low-level object IDs which are unique to each game:
+//note that baseclass is set to a class which all characters & objects inherit
+@!textonly setshorts baseclass 750
+@textonly setshorts baseclass 799
+@!textonly setshorts deepverb 749
+@textonly setshorts deepverb 797
+
+//Note that these values are the same for all TADS2 games:
+setbytes prop_sdesc 08 00 09 00 00 01
+setbytes ret 0x16 00 00
+setbytes header_action 0x1f 00 06 00 00 01 0x4d 01 0x18 00 00
+setbytes header_action_loc1 0x1f 00 06 00 00 01 0x4d 01 0x18 01 00
+setbytes header_idless 06 00 00 01 0x4d 01 0x18 00 00
+setbytes header_idless_loc1 06 00 00 01 0x4d 01 0x18 01 00
+
+setbytes okay say ;Okay.;
+
+setbytes morning stringl ;morning;
+setbytes afternoon stringl ;afternoon;
+setbytes evening stringl ;evening;
+setbytes late stringl ;late;
+setbytes night stringl ;night;
+
+//some useful opcodes:
+setbyte op_pushobj 02
+setbyte op_eq 0b
+setbyte op_ne 0c
+setbyte op_gt 0d
+setbyte op_ge 0e
+setbyte op_lt 0f
+setbyte op_le 10
+setbyte op_jmp 1a
+setbyte op_jf 1b
+setbyte op_pushself 1c
+setbyte op_pushstr 1f
+setbyte op_abort 2b
+setbyte op_jt 3b
+
+setbytes builtin_incturn 0x1E 00 0x17 00
+setbytes call_say 0x1e 01 00 00
+setbytes call_cvtstr 0x1e 01 07 00
+setbytes call_cvtnum 0x1e 01 08 00
+setbytes call_input 0x1E 00 0x1C 00
+setbytes setLocal1 0xC0 01 00
+setbytes pushLocal1 0x14 01 00
+
+setbytes push_a 0x1f 03 00 0x61
+setbytes push_b 0x1f 03 00 0x62
+setbytes push_c 0x1f 03 00 0x63
+setbytes push_d 0x1f 03 00 0x64
+setbytes push_e 0x1f 03 00 0x65
+setbytes push_f 0x1f 03 00 0x66
+setbytes push_g 0x1f 03 00 0x67
+setbytes push_h 0x1f 03 00 0x68
+setbytes push_i 0x1f 03 00 0x69
+setbytes push_j 0x1f 03 00 0x6a
+setbytes push_k 0x1f 03 00 0x6b
+setbytes push_l 0x1f 03 00 0x6c
+setbytes push_m 0x1f 03 00 0x6d
+setbytes push_n 0x1f 03 00 0x6e
+setbytes push_o 0x1f 03 00 0x6f
+setbytes push_p 0x1f 03 00 0x70
+
+//Prepare the IDs for some properties in this game
+setshorts prop_isopen 124
+setshorts prop_islocked 395
+setshorts prop_day 811
+setshorts prop_daytime 812
+setshorts prop_private 898
+
+//////////////////////////////////////////////////////////////
+
+byline replacestring ;v 1.0; ;v 1.0<BR>(with cheat mod v1 by truemechasonic);
+
+setbytes cheathelp stringl ;lockpick [target]<BR>\tUnlocks and opens the target.<BR><BR>steal [target], fsteal [target]<BR>\tMoves the target object into your inventory.<BR><BR>plop [target], fplop [target]<BR>\tMoves the target object to your location.<BR><BR>private<BR>\tSets the current room to private instead of public.<BR><BR>pause, resume<BR>\tPauses/resumes time.<BR><BR>morning, afternoon, evening, late, night<BR>\tChanges time of day.<BR><BR>day0, day1, day2, day3, day4<BR>\tChanges which day it is.;
+setbytes str stringl ;cheats;
+setbytes obj nextobj
+setbytes prop nextprop
+cheats addvoc ;cheats; ;; ;2; ;@obj; ;0;
+cheats addobject ;@obj;
+cheats addsuper ;@obj; ;@deepverb;
+cheats addprop ;@obj; ;@prop_sdesc @str;
+cheats addprop ;@obj; ;@header_action | 1D @cheathelp | @ret;
+
+setbytes str stringl ;lockpick;
+setbytes obj nextobj
+setbytes prop nextprop
+lockpick addprop ;@baseclass; ;@prop @header_idless | 21 1C C1 @prop_islocked 19 | 22 1C C1 @prop_isopen 19 | @okay | @ret;
+setbytes prop2 nextprop
+lockpick addprop ;@baseclass; ;@prop2 @header_idless | 16 00 00 | @ret;
+lockpick addvoc ;lockpick; ;; ;2; ;@obj; ;0;
+lockpick addobject ;@obj;
+lockpick addsuper ;@obj; ;@deepverb;
+lockpick addprop ;@obj; ;@prop_sdesc @str;
+lockpick addprop ;@obj; ;2E 00 11 11 00 01 | 01 | FF FF 00 00 00 00 @prop2 @prop 00 F9 59 F4 C2 00; //action
+
+setbytes str stringl ;steal;
+setbytes obj nextobj
+setbytes prop nextprop
+steal addprop ;@baseclass; ;@prop @header_idless | 14 FF FF 3C 01 26 00 | @okay | @ret;
+setbytes prop2 nextprop
+steal addprop ;@baseclass; ;@prop2 @header_idless | 16 00 00 | @ret;
+steal addvoc ;steal; ;; ;2; ;@obj; ;0;
+steal addobject ;@obj;
+steal addsuper ;@obj; ;@deepverb;
+steal addprop ;@obj; ;@prop_sdesc @str;
+steal addprop ;@obj; ;2E 00 11 11 00 01 | 01 | FF FF 00 00 00 00 @prop2 @prop 00 F9 59 F4 C2 00; //action
+
+setbytes objF nextobj
+fsteal addvoc ;fsteal; ;; ;2; ;@objF; ;0;
+fsteal addobject ;@objF;
+fsteal addsuper ;@objF; ;@deepverb;
+fsteal addprop ;@objF; ;@prop_sdesc @str;
+fsteal addprop ;@objF; ;2E 00 11 11 00 01 | 01 | FF FF 00 00 00 00 @prop2 @prop 00 F9 59 F4 C2 00; //action
+fsteal addprop ;@objF; ;15 00 06 00 00 01 | 4D 03 18 00 00 | 22 17 03 00;
+fsteal addprop ;@objF; ;20 00 06 00 00 01 | 4D 03 18 00 00 | 21 17 03 00;
+
+setbytes str stringl ;plop;
+setbytes obj nextobj
+setbytes prop nextprop
+plop addprop ;@baseclass; ;@prop @header_idless | 14 FF FF 12 00 0d 00 3C 01 26 00 | @okay | @ret;
+setbytes prop2 nextprop
+plop addprop ;@baseclass; ;@prop2 @header_idless | 16 00 00 | @ret;
+plop addvoc ;plop; ;; ;2; ;@obj; ;0;
+plop addobject ;@obj;
+plop addsuper ;@obj; ;@deepverb;
+plop addprop ;@obj; ;@prop_sdesc @str;
+plop addprop ;@obj; ;2E 00 11 11 00 01 | 01 | FF FF 00 00 00 00 @prop2 @prop 00 F9 59 F4 C2 00; //action
+
+setbytes objF nextobj
+fplop addvoc ;fplop; ;; ;2; ;@objF; ;0;
+fplop addobject ;@objF;
+fplop addsuper ;@objF; ;@deepverb;
+fplop addprop ;@objF; ;@prop_sdesc @str;
+fplop addprop ;@objF; ;2E 00 11 11 00 01 | 01 | FF FF 00 00 00 00 @prop2 @prop 00 F9 59 F4 C2 00; //action
+fplop addprop ;@objF; ;15 00 06 00 00 01 | 4D 03 18 00 00 | 22 17 03 00;
+fplop addprop ;@objF; ;20 00 06 00 00 01 | 4D 03 18 00 00 | 21 17 03 00;
+
+//The pause command, which sets a prop to true.
+setbytes str stringl ;pause;
+setbytes obj nextobj
+setbytes propID_paused nextprop
+pause addvoc ;pause; ;; ;2; ;@obj; ;0;
+pause addobject ;@obj;
+pause addsuper ;@obj; ;@deepverb;
+pause addprop ;@obj; ;@prop_sdesc @str;
+pause addprop ;@obj; ;@header_action | 22 02 @me C1 @propID_paused 19 | @okay | @ret;
+
+//The unpause command, which sets the prop to false.
+setbytes str stringl ;resume;
+setbytes obj nextobj
+resume addvoc ;unpause; ;; ;2; ;@obj; ;0;
+resume addvoc ;resume; ;; ;2; ;@obj; ;0;
+resume addobject ;@obj;
+resume addsuper ;@obj; ;@deepverb;
+resume addprop ;@obj; ;@prop_sdesc @str;
+resume addprop ;@obj; ;@header_action | 21 02 @me C1 @propID_paused 19 | @okay | @ret;
+
+//Abort before incturn if the pause prop is true:
+pausable insertcodebefore ;@builtin_incturn; ;21 3e 00 @me @propID_paused @op_jf &label_unpaused | @op_abort | *label_unpaused 19;
+
+setbytes str stringl ;make private;
+setbytes obj nextobj
+private addvoc ;private; ;; ;2; ;@obj; ;0;
+private addobject ;@obj;
+private addsuper ;@obj; ;@deepverb;
+private addprop ;@obj; ;@prop_sdesc @str;
+private addprop ;@obj; ;@header_action | 22 3E 00 @me 0D 00 C1 @prop_private 19 | @okay | @ret;
+
+setbytes str stringl ;change time to morning;
+setbytes obj nextobj
+morning addvoc ;morning; ;; ;2; ;@obj; ;0;
+morning addobject ;@obj;
+morning addsuper ;@obj; ;@deepverb;
+morning addprop ;@obj; ;@prop_sdesc @str;
+morning addprop ;@obj; ;@header_action | 1F @morning 02 @me C1 @prop_daytime 19 | @okay | @ret;
+
+setbytes str stringl ;change time to afternoon;
+setbytes obj nextobj
+afternoon addvoc ;afternoon; ;; ;2; ;@obj; ;0;
+afternoon addobject ;@obj;
+afternoon addsuper ;@obj; ;@deepverb;
+afternoon addprop ;@obj; ;@prop_sdesc @str;
+afternoon addprop ;@obj; ;@header_action | 1F @afternoon 02 @me C1 @prop_daytime 19 | @okay | @ret;
+
+setbytes str stringl ;change time to evening;
+setbytes obj nextobj
+evening addvoc ;evening; ;; ;2; ;@obj; ;0;
+evening addobject ;@obj;
+evening addsuper ;@obj; ;@deepverb;
+evening addprop ;@obj; ;@prop_sdesc @str;
+evening addprop ;@obj; ;@header_action | 1F @evening 02 @me C1 @prop_daytime 19 | @okay | @ret;
+
+setbytes str stringl ;change time to late;
+setbytes obj nextobj
+late addvoc ;late; ;; ;2; ;@obj; ;0;
+late addobject ;@obj;
+late addsuper ;@obj; ;@deepverb;
+late addprop ;@obj; ;@prop_sdesc @str;
+late addprop ;@obj; ;@header_action | 1F @late 02 @me C1 @prop_daytime 19 | @okay | @ret;
+
+setbytes str stringl ;change time to night;
+setbytes obj nextobj
+night addvoc ;night; ;; ;2; ;@obj; ;0;
+night addobject ;@obj;
+night addsuper ;@obj; ;@deepverb;
+night addprop ;@obj; ;@prop_sdesc @str;
+night addprop ;@obj; ;@header_action | 1F @night 02 @me C1 @prop_daytime 19 | @okay | @ret;
+
+setbytes str stringl ;timewarp to day0;
+setbytes obj nextobj
+day0 addvoc ;day0; ;; ;2; ;@obj; ;0;
+day0 addobject ;@obj;
+day0 addsuper ;@obj; ;@deepverb;
+day0 addprop ;@obj; ;@prop_sdesc @str;
+day0 addprop ;@obj; ;@header_action | 01 00 00 00 00 02 @me C1 @prop_day 19 | @okay | @ret;
+
+setbytes str stringl ;timewarp to day1;
+setbytes obj nextobj
+day1 addvoc ;day1; ;; ;2; ;@obj; ;0;
+day1 addobject ;@obj;
+day1 addsuper ;@obj; ;@deepverb;
+day1 addprop ;@obj; ;@prop_sdesc @str;
+day1 addprop ;@obj; ;@header_action | 01 01 00 00 00 02 @me C1 @prop_day 19 | @okay | @ret;
+
+setbytes str stringl ;timewarp to day2;
+setbytes obj nextobj
+day2 addvoc ;day2; ;; ;2; ;@obj; ;0;
+day2 addobject ;@obj;
+day2 addsuper ;@obj; ;@deepverb;
+day2 addprop ;@obj; ;@prop_sdesc @str;
+day2 addprop ;@obj; ;@header_action | 01 02 00 00 00 02 @me C1 @prop_day 19 | @okay | @ret;
+
+setbytes str stringl ;timewarp to day3;
+setbytes obj nextobj
+day3 addvoc ;day3; ;; ;2; ;@obj; ;0;
+day3 addobject ;@obj;
+day3 addsuper ;@obj; ;@deepverb;
+day3 addprop ;@obj; ;@prop_sdesc @str;
+day3 addprop ;@obj; ;@header_action | 01 03 00 00 00 02 @me C1 @prop_day 19 | @okay | @ret;
+
+setbytes str stringl ;timewarp to day4;
+setbytes obj nextobj
+day4 addvoc ;day4; ;; ;2; ;@obj; ;0;
+day4 addobject ;@obj;
+day4 addsuper ;@obj; ;@deepverb;
+day4 addprop ;@obj; ;@prop_sdesc @str;
+day4 addprop ;@obj; ;@header_action | 01 04 00 00 00 02 @me C1 @prop_day 19 | @okay | @ret;
+
+setbytes str stringl ;make kissable (only affects Alison);
+setbytes obj nextobj
+setbytes prop nextprop
+cankiss addprop ;@baseclass; ;@prop @header_idless | 22 @op_pushself C1 @prop_cankiss 19 | @okay | @ret;
+setbytes prop2 nextprop
+cankiss addprop ;@baseclass; ;@prop2 @header_idless | 16 00 00 | @ret;
+cankiss addvoc ;cankiss; ;; ;2; ;@obj; ;0;
+cankiss addobject ;@obj;
+cankiss addsuper ;@obj; ;@deepverb;
+cankiss addprop ;@obj; ;@prop_sdesc @str;
+cankiss addprop ;@obj; ;2E 00 11 11 00 01 | 01 | FF FF 00 00 00 00 @prop2 @prop 00 F9 59 F4 C2 00; //action
+
+setbytes str stringl ;make fuckable;
+setbytes obj nextobj
+setbytes prop nextprop
+canfuck addprop ;@baseclass; ;@prop @header_idless | 22 @op_pushself C1 @prop_canfuck 19 | @okay | @ret;
+setbytes prop2 nextprop
+canfuck addprop ;@baseclass; ;@prop2 @header_idless | 16 00 00 | @ret;
+canfuck addvoc ;canfuck; ;; ;2; ;@obj; ;0;
+canfuck addobject ;@obj;
+canfuck addsuper ;@obj; ;@deepverb;
+canfuck addprop ;@obj; ;@prop_sdesc @str;
+canfuck addprop ;@obj; ;2E 00 11 11 00 01 | 01 | FF FF 00 00 00 00 @prop2 @prop 00 F9 59 F4 C2 00; //action

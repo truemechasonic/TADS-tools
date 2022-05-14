@@ -1,0 +1,780 @@
+#School Dreams 3 - Cheat Patch
+
+//****** GENERAL SETUP  *********
+
+//Set separator character:
+separator ;
+
+echo Checking game version...
+
+//Assertions
+set assert1 hasString ;School Dreams 3: School Dreams Forever;
+@!assert1 echo Error: Selected game is not SD3.
+@!assert1 abort
+set assert2 hasString ;cheat mod;
+@assert2 echo Error: The game has already had cheats added.
+@assert2 abort
+
+//*****************************/
+
+
+//****** PREPARE VARIABLES *******
+
+//Set variables for later:
+set textonly hascode ;3E 00 42 00 E4 03;
+@textonly echo Detected text-only version of SD3. That's probably fine. 
+
+//Set some obect IDs for this game:
+@!textonly setbytes me 0x41 00
+@textonly setbytes me 0x42 00
+@!textonly setbytes molly 0x57 01
+@textonly setbytes molly 0x5e 01
+@!textonly setbytes becky 0x4c 01
+@textonly setbytes becky 0x53 01
+@!textonly setbytes gary 0x56 01
+@textonly setbytes gary 0x5d 01
+@!textonly setshorts alison 345 
+@textonly setshorts alison 352
+@!textonly setshorts melissa 346
+@textonly setshorts melissa 353
+@!textonly setshorts mike 334
+@textonly setshorts mike 341
+setbytes beckymum idbysdesc ;Mrs Johnson;
+@!textonly setshorts obj_truthordare 918
+@textonly setshorts obj_truthordare 974
+@!textonly setshorts obj_todanswers 919
+@textonly setshorts obj_todanswers 975
+@!textonly setshorts obj_dares 920
+@textonly setshorts obj_sares 976
+@!textonly setshorts obj_party 521
+@textonly setshorts obj_party 545
+
+//Some low-level object IDs which are unique to each game:
+//note that baseclass is set to a class which all characters & objects inherit
+@!textonly setshorts baseclass 328
+@textonly setshorts baseclass 334
+@!textonly setshorts deepverb 96
+@textonly setshorts deepverb 98
+
+//note that 'timing' variable is used for school bell
+@!textonly setshorts timing 354
+@textonly setshorts timing 361
+
+//Prepare the IDs for game-specific properties we need
+setbytes prop_affection 0xa0 03
+setbytes prop_day 0x50 01
+setbytes prop_daytime 0x51 01
+setshorts prop_date 1880
+setshorts prop_currentdate 1126
+setshorts prop_position 993
+
+setshorts prop_melanswerchance 2032
+setshorts prop_mollyanswerchance 2033
+setshorts prop_beckyanswerchance 2034
+setshorts prop_alisonanswerchance 2035
+setshorts prop_garyanswerchance 2036
+setshorts prop_mikeanswerchance 2037
+
+setshorts prop_partyscriptNum 1961
+setshorts prop_asker 1965
+setshorts prop_todscript 1966
+
+setshorts prop_randgirl 1955
+setshorts prop_randguy 1958
+setshorts prop_chosenguy 1959
+setshorts prop_chosengirl 1956
+setshorts prop_pickagirl 2007
+setshorts prop_pickaguy 1998
+
+setshorts prop_willkiss 1313
+setshorts prop_willtouch 1311
+setshorts prop_willblow 1025
+setshorts prop_willfuck 856
+
+setshorts prop_athome 943
+
+//Note that these values are the same for all TADS2 games:
+setshorts prop_actorAction 16
+setbytes prop_sdesc 08 00 09 00 00 01
+setbytes ret 0x16 00 00
+setbytes header_action 0x1f 00 06 00 00 01 0x4d 01 0x18 00 00
+setbytes header_action_loc1 0x1f 00 06 00 00 01 0x4d 01 0x18 01 00
+setbytes header_idless 06 00 00 01 0x4d 01 0x18 00 00
+setbytes header2_idless 06 00 00 01 0x4d 02 0x18 00 00
+setbytes header3_idless 06 00 00 01 0x4d 03 0x18 00 00
+setbytes header_idless_loc1 06 00 00 01 0x4d 01 0x18 01 00
+
+setbytes okay say ;Okay. ;
+
+setbytes morning stringl ;morning;
+setbytes afternoon stringl ;afternoon;
+setbytes evening stringl ;evening;
+setbytes late stringl ;late;
+setbytes night stringl ;night;
+
+//some useful opcodes:
+setbyte op_pushobj 02
+setbyte op_eq 0b
+setbyte op_ne 0c
+setbyte op_gt 0d
+setbyte op_ge 0e
+setbyte op_lt 0f
+setbyte op_le 10
+setbyte op_jmp 1a
+setbyte op_jf 1b
+setbyte op_pushself 1c
+setbyte op_pushstr 1f
+setbyte op_abort 2b
+setbyte op_jt 3b
+
+setbytes pusharg1 0x14 0xFF 0xFF
+setbytes pusharg2 0x14 0xFE 0xFF
+setbytes pusharg3 0x14 0xFD 0xFF
+
+setbytes builtin_incturn 0x1E 00 0x17 00
+setbytes call_say 0x1e 01 00 00
+setbytes call_cvtstr 0x1e 01 07 00
+setbytes call_cvtnum 0x1e 01 08 00
+setbytes call_input 0x1e 00 0x1c 00
+setbytes call_parserSetMe 0x1e 01 0x42 00
+setbytes setLocal1 0xC0 01 00
+setbytes pushLocal1 0x14 01 00
+
+setbytes push_a 0x1f 03 00 0x61
+setbytes push_b 0x1f 03 00 0x62
+setbytes push_c 0x1f 03 00 0x63
+setbytes push_d 0x1f 03 00 0x64
+setbytes push_e 0x1f 03 00 0x65
+setbytes push_f 0x1f 03 00 0x66
+setbytes push_g 0x1f 03 00 0x67
+setbytes push_h 0x1f 03 00 0x68
+setbytes push_i 0x1f 03 00 0x69
+setbytes push_j 0x1f 03 00 0x6a
+setbytes push_k 0x1f 03 00 0x6b
+setbytes push_l 0x1f 03 00 0x6c
+setbytes push_m 0x1f 03 00 0x6d
+setbytes push_n 0x1f 03 00 0x6e
+setbytes push_o 0x1f 03 00 0x6f
+setbytes push_p 0x1f 03 00 0x70
+
+//Automatically get the IDs for some properties
+setbytes loc_bedroom_player idbysdesc ;Your bedroom;
+setbytes loc_bedroom_molly idbysdesc ;Molly's bedroom;
+setbytes loc_bedroom_alison idbysdesc ;Alison's bedroom;
+setbytes loc_bedroom_becky idbysdesc ;Becky's bedroom;
+setbytes loc_changing_room idbysdesc ;Girls' Changing Rooms;
+setbytes loc_behind_gym idbysdesc ;Behind the Gym;
+setbytes loc_office idbysdesc ;Headmaster's Office;
+setbytes loc_empty_class idbysdesc ;An empty classroom;
+setbytes loc_house_holloway idbysdesc ;Outside Miss Holloway's house;
+setbytes loc_alley idbysdesc ;Dark Alley;
+setbytes loc_woods idbysdesc ;End of the Path;
+setbytes loc_movie idbysdesc ;Cinema;
+setbytes loc_car idbysdesc ;In your car;
+
+//*****************************/
+
+
+//****** MODIFY GAME CODE *******
+
+echo Applying cheats...
+
+//Replace dog pics with full versions:
+//restoreDog replacestring ;hollowaydogdoing.jpg; ;hollowaydf1b.jpg;
+//restoreDog replacestring ;hollowaydoglick.jpg; ;hollowaydl1b.jpg;
+
+//Code alteration:
+
+byline replacestring ;Version 1.0; ;Version 1.0<BR>(with cheat mod v4 by truemechasonic);
+
+setbytes cheathelp stringl ;lockpick [target]<BR>\tUnlocks and opens the targeted door.<BR><BR>warp [target], fwarp [target]<BR>\tTeleports the target object to a location of your choice.<BR><BR>steal [target], fsteal [target]<BR>\tMoves the target object into your inventory.<BR><BR>plop [target], fplop [target]<BR>\tMoves the target object to your location.<BR><BR>private<BR>\tSets the current room to private instead of public.<BR><BR>money<BR>\tIncreases money by $250.<BR><BR>pause, resume<BR>\tPauses/resumes time.<BR><BR>pausebell, ringbell<BR>\tPrevents/triggers the school bell during lunch.<BR><BR>plusmolly, minusmolly<BR>\tChanges Molly's affection for the player by one point.<BR><BR>plusbecky, minusbecky<BR>\tChanges Becky's affection for the player by one point.<BR><BR>plusgary, minusgary<BR>\tChanges Molly's affection for Gary by one point.<BR><BR>morning, afternoon, evening, late, night<BR>\tChanges time of day.<BR><BR>day0, day1, day2, day3, day4<BR>\tChanges which day it is.<BR><BR>three, threeoff<BR>\tEnables/disables threesome mode with Becky and Molly. Warning: extra buggy.;
+setbytes str stringl ;cheats;
+setbytes obj nextobj
+setbytes prop nextprop
+cheats addvoc ;cheats; ;; ;2; ;@obj; ;0;
+cheats addobject ;@obj;
+cheats addsuper ;@obj; ;@deepverb;
+cheats addprop ;@obj; ;@prop_sdesc @str;
+cheats addprop ;@obj; ;@header_action | 1D @cheathelp | @ret;
+
+setbytes strdesc stringl ;warp;
+setbytes obj nextobj
+warp addvoc ;warp; ;; ;2; ;@obj; ;0;
+warp addobject ;@obj;
+warp addsuper ;@obj; ;@deepverb;
+warp addprop ;@obj; ;@prop_sdesc @strdesc;
+setbytes str say ;Where to?<BR>a) Player's inventory<BR>b) Player's location<BR>c) Player's bedroom<BR>d) Molly's bedroom<BR>e) Alison's bedroom<BR>f) Becky's bedroom<BR>g) Girls' changing room<BR>h) Behind gym<BR>i) Headmaster's office<BR>j) Empty classroom<BR>k) Holloway's house<BR>l) Alley<BR>m) Woods<BR>n) Movie<BR>o) Car<BR>;
+setbytes prop nextprop
+warp addprop ;@baseclass; ;@prop @header_idless_loc1 | @str | @call_input @setLocal1 19 | @pushLocal1 @call_cvtstr @push_a @op_eq @op_jf &label_b | 14 FF FF @op_jmp &label_ret | *label_b @pushLocal1 @call_cvtstr @push_b @op_eq @op_jf &label_c | 14 FF FF 12 00 0d 00 @op_jmp &label_ret | *label_c @pushLocal1 @call_cvtstr @push_c @op_eq @op_jf &label_d | @op_pushobj @loc_bedroom_player @op_jmp &label_ret | *label_d @pushLocal1 @call_cvtstr @push_d @op_eq @op_jf &label_e | @op_pushobj @loc_bedroom_molly @op_jmp &label_ret | *label_e @pushLocal1 @call_cvtstr @push_e @op_eq @op_jf &label_f | @op_pushobj @loc_bedroom_alison @op_jmp &label_ret | *label_f @pushLocal1 @call_cvtstr @push_f @op_eq @op_jf &label_g | @op_pushobj @loc_bedroom_becky @op_jmp &label_ret | *label_g @pushLocal1 @call_cvtstr @push_g @op_eq @op_jf &label_h | @op_pushobj @loc_changing_room @op_jmp &label_ret | *label_h @pushLocal1 @call_cvtstr @push_h @op_eq @op_jf &label_i | @op_pushobj @loc_behind_gym @op_jmp &label_ret | *label_i @pushLocal1 @call_cvtstr @push_i @op_eq @op_jf &label_j | @op_pushobj @loc_office @op_jmp &label_ret | *label_j @pushLocal1 @call_cvtstr @push_j @op_eq @op_jf &label_k | @op_pushobj @loc_empty_class @op_jmp &label_ret | *label_k @pushLocal1 @call_cvtstr @push_k @op_eq @op_jf &label_l | @op_pushobj @loc_house_holloway @op_jmp &label_ret | *label_l @pushLocal1 @call_cvtstr @push_l @op_eq @op_jf &label_m | @op_pushobj @loc_alley @op_jmp &label_ret | *label_m @pushLocal1 @call_cvtstr @push_m @op_eq @op_jf &label_n | @op_pushobj @loc_woods @op_jmp &label_ret | *label_n @pushLocal1 @call_cvtstr @push_n @op_eq @op_jf &label_o | @op_pushobj @loc_movie @op_jmp &label_ret | *label_o @pushLocal1 @call_cvtstr @push_o @op_eq @op_jf &label_p | @op_pushobj @loc_car @op_jmp &label_ret | *label_p say "Huh?" @op_jmp &label_ret2 *label_ret 3C 01 26 00 say "Okay." *label_ret2 @ret;
+setbytes prop2 nextprop
+warp addprop ;@baseclass; ;@prop2 @header_idless | 16 00 00 | @ret;
+warp addprop ;@obj; ;2E 00 11 11 00 01 | 01 | FF FF 00 00 00 00 @prop2 @prop 00 F9 59 F4 C2 00; //action
+
+setbytes objF nextobj
+fwarp addvoc ;fwarp; ;; ;2; ;@objF; ;0;
+fwarp addobject ;@objF;
+fwarp addsuper ;@objF; ;@deepverb;
+fwarp addprop ;@objF; ;@prop_sdesc @strdesc;
+fwarp addprop ;@objF; ;2E 00 11 11 00 01 | 01 | FF FF 00 00 00 00 @prop2 @prop 00 F9 59 F4 C2 00; //action
+fwarp addprop ;@objF; ;15 00 06 00 00 01 | 4D 03 18 00 00 | 22 17 03 00;
+fwarp addprop ;@objF; ;20 00 06 00 00 01 | 4D 03 18 00 00 | 21 17 03 00;
+
+setbytes str stringl ;lockpick;
+setbytes obj nextobj
+setbytes prop nextprop
+lockpick addprop ;@baseclass; ;@prop @header_idless | 21 1C C1 92 01 19 | 22 1C C1 7c 00 19 | @okay | @ret;
+setbytes prop2 nextprop
+lockpick addprop ;@baseclass; ;@prop2 @header_idless | 16 00 00 | @ret;
+lockpick addvoc ;lockpick; ;; ;2; ;@obj; ;0;
+lockpick addobject ;@obj;
+lockpick addsuper ;@obj; ;@deepverb;
+lockpick addprop ;@obj; ;@prop_sdesc @str;
+lockpick addprop ;@obj; ;2E 00 11 11 00 01 | 01 | FF FF 00 00 00 00 @prop2 @prop 00 F9 59 F4 C2 00; //action
+
+setbytes str stringl ;steal;
+setbytes obj nextobj
+setbytes prop nextprop
+steal addprop ;@baseclass; ;@prop @header_idless | 14 FF FF 3C 01 26 00 | @okay | @ret;
+setbytes prop2 nextprop
+steal addprop ;@baseclass; ;@prop2 @header_idless | 16 00 00 | @ret;
+steal addvoc ;steal; ;; ;2; ;@obj; ;0;
+steal addobject ;@obj;
+steal addsuper ;@obj; ;@deepverb;
+steal addprop ;@obj; ;@prop_sdesc @str;
+steal addprop ;@obj; ;2E 00 11 11 00 01 | 01 | FF FF 00 00 00 00 @prop2 @prop 00 F9 59 F4 C2 00; //action
+
+setbytes objF nextobj
+fsteal addvoc ;fsteal; ;; ;2; ;@objF; ;0;
+fsteal addobject ;@objF;
+fsteal addsuper ;@objF; ;@deepverb;
+fsteal addprop ;@objF; ;@prop_sdesc @str;
+fsteal addprop ;@objF; ;2E 00 11 11 00 01 | 01 | FF FF 00 00 00 00 @prop2 @prop 00 F9 59 F4 C2 00; //action
+fsteal addprop ;@objF; ;15 00 06 00 00 01 | 4D 03 18 00 00 | 22 17 03 00;
+fsteal addprop ;@objF; ;20 00 06 00 00 01 | 4D 03 18 00 00 | 21 17 03 00;
+
+setbytes str stringl ;plop;
+setbytes obj nextobj
+setbytes prop nextprop
+plop addprop ;@baseclass; ;@prop @header_idless | 14 FF FF 12 00 0d 00 3C 01 26 00 | @okay | @ret;
+setbytes prop2 nextprop
+plop addprop ;@baseclass; ;@prop2 @header_idless | 16 00 00 | @ret;
+plop addvoc ;plop; ;; ;2; ;@obj; ;0;
+plop addobject ;@obj;
+plop addsuper ;@obj; ;@deepverb;
+plop addprop ;@obj; ;@prop_sdesc @str;
+plop addprop ;@obj; ;2E 00 11 11 00 01 | 01 | FF FF 00 00 00 00 @prop2 @prop 00 F9 59 F4 C2 00; //action
+
+setbytes objF nextobj
+fplop addvoc ;fplop; ;; ;2; ;@objF; ;0;
+fplop addobject ;@objF;
+fplop addsuper ;@objF; ;@deepverb;
+fplop addprop ;@objF; ;@prop_sdesc @str;
+fplop addprop ;@objF; ;2E 00 11 11 00 01 | 01 | FF FF 00 00 00 00 @prop2 @prop 00 F9 59 F4 C2 00; //action
+fplop addprop ;@objF; ;15 00 06 00 00 01 | 4D 03 18 00 00 | 22 17 03 00;
+fplop addprop ;@objF; ;20 00 06 00 00 01 | 4D 03 18 00 00 | 21 17 03 00;
+
+setbytes str stringl ;make private;
+setbytes obj nextobj
+private addvoc ;private; ;; ;2; ;@obj; ;0;
+private addobject ;@obj;
+private addsuper ;@obj; ;@deepverb;
+private addprop ;@obj; ;@prop_sdesc @str;
+private addprop ;@obj; ;@header_action | 21 3E 00 @me 0D 00 C1 FE 03 19 21 3E 00 @me 0D 00 C1 06 04 19 22 3E 00 @me 0D 00 C1 F1 03 19 | @okay | @ret;
+
+setbytes str stringl ;make becky's mom not be home;
+setbytes obj nextobj
+momgone addvoc ;momgone; ;; ;2; ;@obj; ;0;
+momgone addobject ;@obj;
+momgone addsuper ;@obj; ;@deepverb;
+momgone addprop ;@obj; ;@prop_sdesc @str;
+momgone addprop ;@obj; ;@header_action | 21 02 @beckymum C1 @prop_athome 19 | @okay | @ret;
+
+setbytes str stringl ;win the lottery;
+setbytes obj nextobj
+money addvoc ;money; ;; ;2; ;@obj; ;0;
+money addobject ;@obj;
+money addsuper ;@obj; ;@deepverb;
+money addprop ;@obj; ;@prop_sdesc @str;
+money addprop ;@obj; ;@header_action | 01 fa 00 00 00 02 @me C5 69 03 19 | @okay | @ret;
+
+setbytes str stringl ;pause;
+setbytes obj nextobj
+setbytes propID_paused nextprop
+pause addvoc ;pause; ;; ;2; ;@obj; ;0;
+pause addobject ;@obj;
+pause addsuper ;@obj; ;@deepverb;
+pause addprop ;@obj; ;@prop_sdesc @str;
+pause addprop ;@obj; ;@header_action | 22 02 @me C1 @propID_paused 19 | @okay | @ret;
+
+setbytes str stringl ;resume;
+setbytes obj nextobj
+resume addvoc ;unpause; ;; ;2; ;@obj; ;0;
+resume addvoc ;resume; ;; ;2; ;@obj; ;0;
+resume addobject ;@obj;
+resume addsuper ;@obj; ;@deepverb;
+resume addprop ;@obj; ;@prop_sdesc @str;
+resume addprop ;@obj; ;@header_action | 21 02 @me C1 @propID_paused 19 | @okay | @ret;
+
+//Stuff for the pause/unpause command:
+pausable insertcodebefore ;@builtin_incturn; ;21 3e 00 @me @propID_paused @op_jf &label_unpaused | @op_abort | *label_unpaused 19;
+
+setbytes str stringl ;pause bell;
+setbytes obj nextobj
+pausebell addvoc ;pausebell; ;; ;2; ;@obj; ;0;
+pausebell addobject ;@obj;
+pausebell addsuper ;@obj; ;@deepverb;
+pausebell addprop ;@obj; ;@prop_sdesc @str;
+pausebell addprop ;@obj; ;@header_action | 01 10 00 00 00 02 @timing C1 ef 04 19 | @okay | @ret;
+
+setbytes str stringl ;ring bell;
+setbytes obj nextobj
+ringbell addvoc ;ringbell; ;; ;2; ;@obj; ;0;
+ringbell addobject ;@obj;
+ringbell addsuper ;@obj; ;@deepverb;
+ringbell addprop ;@obj; ;@prop_sdesc @str;
+ringbell addprop ;@obj; ;@header_action | 01 09 00 00 00 02 @timing C1 ef 04 19 | @okay | @ret;
+
+setbytes str stringl ;increase molly affection;
+setbytes obj nextobj
+plusmolly addvoc ;plusmolly; ;; ;2; ;@obj; ;0;
+plusmolly addvoc ;mollyplus; ;; ;2; ;@obj; ;0;
+plusmolly addvoc ;mollyup; ;; ;2; ;@obj; ;0;
+plusmolly addobject ;@obj;
+plusmolly addsuper ;@obj; ;@deepverb;
+plusmolly addprop ;@obj; ;@prop_sdesc @str;
+plusmolly addprop ;@obj; ;@header_action | 01 01 00 00 00 02 @molly C5 @prop_affection 19 | @okay | @ret;
+
+setbytes str stringl ;decrease molly affection;
+setbytes obj nextobj
+minusmolly addvoc ;minusmolly; ;; ;2; ;@obj; ;0;
+minusmolly addvoc ;mollyminus; ;; ;2; ;@obj; ;0;
+minusmolly addvoc ;mollydown; ;; ;2; ;@obj; ;0;
+minusmolly addobject ;@obj;
+minusmolly addsuper ;@obj; ;@deepverb;
+minusmolly addprop ;@obj; ;@prop_sdesc @str;
+minusmolly addprop ;@obj; ;@header_action | 01 ff ff ff ff 02 @molly C5 @prop_affection 19 | @okay | @ret;
+
+setbytes str stringl ;increase becky affection;
+setbytes obj nextobj
+plusbecky addvoc ;plusbecky; ;; ;2; ;@obj; ;0;
+plusbecky addvoc ;beckyplus; ;; ;2; ;@obj; ;0;
+plusbecky addvoc ;beckyup; ;; ;2; ;@obj; ;0;
+plusbecky addobject ;@obj;
+plusbecky addsuper ;@obj; ;@deepverb;
+plusbecky addprop ;@obj; ;@prop_sdesc @str;
+plusbecky addprop ;@obj; ;@header_action | 01 01 00 00 00 02 @becky C5 @prop_affection 19 | @okay | @ret;
+
+setbytes str stringl ;decrease becky affection;
+setbytes obj nextobj
+minusbecky addvoc ;minusbecky; ;; ;2; ;@obj; ;0;
+minusbecky addvoc ;beckyminus; ;; ;2; ;@obj; ;0;
+minusbecky addvoc ;beckydown; ;; ;2; ;@obj; ;0;
+minusbecky addobject ;@obj;
+minusbecky addsuper ;@obj; ;@deepverb;
+minusbecky addprop ;@obj; ;@prop_sdesc @str;
+minusbecky addprop ;@obj; ;@header_action | 01 ff ff ff ff 02 @becky C5 @prop_affection 19 | @okay | @ret;
+
+setbytes str stringl ;increase gary affection;
+setbytes obj nextobj
+plusgary addvoc ;plusgary; ;; ;2; ;@obj; ;0;
+plusgary addvoc ;garyplus; ;; ;2; ;@obj; ;0;
+plusgary addvoc ;garyup; ;; ;2; ;@obj; ;0;
+plusgary addobject ;@obj;
+plusgary addsuper ;@obj; ;@deepverb;
+plusgary addprop ;@obj; ;@prop_sdesc @str;
+plusgary addprop ;@obj; ;@header_action | 01 01 00 00 00 02 @gary C5 @prop_affection 19 | @okay | @ret;
+
+setbytes str stringl ;decrease gary affection;
+setbytes obj nextobj
+minusgary addvoc ;minusgary; ;; ;2; ;@obj; ;0;
+minusgary addvoc ;garyminus; ;; ;2; ;@obj; ;0;
+minusgary addvoc ;garydown; ;; ;2; ;@obj; ;0;
+minusgary addobject ;@obj;
+minusgary addsuper ;@obj; ;@deepverb;
+minusgary addprop ;@obj; ;@prop_sdesc @str;
+minusgary addprop ;@obj; ;@header_action | 01 ff ff ff ff 02 @gary C5 @prop_affection 19 | @okay | @ret;
+
+setbytes str stringl ;change time to morning;
+setbytes obj nextobj
+morning addvoc ;morning; ;; ;2; ;@obj; ;0;
+morning addobject ;@obj;
+morning addsuper ;@obj; ;@deepverb;
+morning addprop ;@obj; ;@prop_sdesc @str;
+morning addprop ;@obj; ;@header_action | 1F @morning 02 @me C1 @prop_daytime 19 | @okay | @ret;
+
+setbytes str stringl ;change time to afternoon;
+setbytes obj nextobj
+afternoon addvoc ;afternoon; ;; ;2; ;@obj; ;0;
+afternoon addobject ;@obj;
+afternoon addsuper ;@obj; ;@deepverb;
+afternoon addprop ;@obj; ;@prop_sdesc @str;
+afternoon addprop ;@obj; ;@header_action | 1F @afternoon 02 @me C1 @prop_daytime 19 | @okay | @ret;
+
+setbytes str stringl ;change time to evening;
+setbytes obj nextobj
+evening addvoc ;evening; ;; ;2; ;@obj; ;0;
+evening addobject ;@obj;
+evening addsuper ;@obj; ;@deepverb;
+evening addprop ;@obj; ;@prop_sdesc @str;
+evening addprop ;@obj; ;@header_action | 1F @evening 02 @me C1 @prop_daytime 19 | @okay | @ret;
+
+setbytes str stringl ;change time to late;
+setbytes obj nextobj
+late addvoc ;late; ;; ;2; ;@obj; ;0;
+late addobject ;@obj;
+late addsuper ;@obj; ;@deepverb;
+late addprop ;@obj; ;@prop_sdesc @str;
+late addprop ;@obj; ;@header_action | 1F @late 02 @me C1 @prop_daytime 19 | @okay | @ret;
+
+setbytes str stringl ;change time to night;
+setbytes obj nextobj
+night addvoc ;night; ;; ;2; ;@obj; ;0;
+night addobject ;@obj;
+night addsuper ;@obj; ;@deepverb;
+night addprop ;@obj; ;@prop_sdesc @str;
+night addprop ;@obj; ;@header_action | 1F @night 02 @me C1 @prop_daytime 19 | @okay | @ret;
+
+setbytes str stringl ;timewarp to day0;
+setbytes obj nextobj
+day0 addvoc ;day0; ;; ;2; ;@obj; ;0;
+day0 addobject ;@obj;
+day0 addsuper ;@obj; ;@deepverb;
+day0 addprop ;@obj; ;@prop_sdesc @str;
+day0 addprop ;@obj; ;@header_action | 01 00 00 00 00 02 @me C1 @prop_day 19 | @okay | @ret;
+
+setbytes str stringl ;timewarp to day1;
+setbytes obj nextobj
+day1 addvoc ;day1; ;; ;2; ;@obj; ;0;
+day1 addobject ;@obj;
+day1 addsuper ;@obj; ;@deepverb;
+day1 addprop ; @obj; ;@prop_sdesc @str;
+day1 addprop ;@obj; ;@header_action | 01 01 00 00 00 02 @me C1 @prop_day 19 | @okay | @ret;
+
+setbytes str stringl ;timewarp to day2;
+setbytes obj nextobj
+day2 addvoc ;day2; ;; ;2; ;@obj; ;0;
+day2 addobject ;@obj;
+day2 addsuper ;@obj; ;@deepverb;
+day2 addprop ;@obj; ;@prop_sdesc @str;
+day2 addprop ;@obj; ;@header_action | 01 02 00 00 00 02 @me C1 @prop_day 19 | @okay | @ret;
+
+setbytes str stringl ;timewarp to day3;
+setbytes obj nextobj
+day3 addvoc ;day3; ;; ;2; ;@obj; ;0;
+day3 addobject ;@obj;
+day3 addsuper ;@obj; ;@deepverb;
+day3 addprop ;@obj; ;@prop_sdesc @str;
+day3 addprop ;@obj; ;@header_action | 01 03 00 00 00 02 @me C1 @prop_day 19 | @okay | @ret;
+
+setbytes str stringl ;timewarp to day4;
+setbytes obj nextobj
+day4 addvoc ;day4; ;; ;2; ;@obj; ;0;
+day4 addobject ;@obj;
+day4 addsuper ;@obj; ;@deepverb;
+day4 addprop ;@obj; ;@prop_sdesc @str;
+day4 addprop ;@obj; ;@header_action | 01 04 00 00 00 02 @me C1 @prop_day 19 | @okay | @ret;
+
+setbytes str stringl ;make kissable (only affects Alison);
+setbytes obj nextobj
+setbytes prop nextprop
+cankiss addprop ;@baseclass; ;@prop @header_idless | 22 @op_pushself C1 @prop_willkiss 19 | @okay | @ret;
+setbytes prop2 nextprop
+cankiss addprop ;@baseclass; ;@prop2 @header_idless | 16 00 00 | @ret;
+cankiss addvoc ;cankiss; ;; ;2; ;@obj; ;0;
+cankiss addobject ;@obj;
+cankiss addsuper ;@obj; ;@deepverb;
+cankiss addprop ;@obj; ;@prop_sdesc @str;
+cankiss addprop ;@obj; ;2E 00 11 11 00 01 | 01 | FF FF 00 00 00 00 @prop2 @prop 00 F9 59 F4 C2 00; //action
+
+setbytes str stringl ;make touchable (only affects Alison);
+setbytes obj nextobj
+setbytes prop nextprop
+cantouch addprop ;@baseclass; ;@prop @header_idless | 22 @op_pushself C1 @prop_willtouch 19 | @okay | @ret;
+setbytes prop2 nextprop
+cantouch addprop ;@baseclass; ;@prop2 @header_idless | 16 00 00 | @ret;
+cantouch addvoc ;cantouch; ;; ;2; ;@obj; ;0;
+cantouch addobject ;@obj;
+cantouch addsuper ;@obj; ;@deepverb;
+cantouch addprop ;@obj; ;@prop_sdesc @str;
+cantouch addprop ;@obj; ;2E 00 11 11 00 01 | 01 | FF FF 00 00 00 00 @prop2 @prop 00 F9 59 F4 C2 00; //action
+
+setbytes str stringl ;make willing to blow (only affects Alison?);
+setbytes obj nextobj
+setbytes prop nextprop
+canblow addprop ;@baseclass; ;@prop @header_idless | 22 @op_pushself C1 @prop_willblow 19 | @okay | @ret;
+setbytes prop2 nextprop
+canblow addprop ;@baseclass; ;@prop2 @header_idless | 16 00 00 | @ret;
+canblow addvoc ;canblow; ;; ;2; ;@obj; ;0;
+canblow addobject ;@obj;
+canblow addsuper ;@obj; ;@deepverb;
+canblow addprop ;@obj; ;@prop_sdesc @str;
+canblow addprop ;@obj; ;2E 00 11 11 00 01 | 01 | FF FF 00 00 00 00 @prop2 @prop 00 F9 59 F4 C2 00; //action
+
+setbytes str stringl ;make fuckable;
+setbytes obj nextobj
+setbytes prop nextprop
+canfuck addprop ;@baseclass; ;@prop @header_idless | 22 @op_pushself C1 @prop_willfuck 19 | @okay | @ret;
+setbytes prop2 nextprop
+canfuck addprop ;@baseclass; ;@prop2 @header_idless | 16 00 00 | @ret;
+canfuck addvoc ;canfuck; ;; ;2; ;@obj; ;0;
+canfuck addobject ;@obj;
+canfuck addsuper ;@obj; ;@deepverb;
+canfuck addprop ;@obj; ;@prop_sdesc @str;
+canfuck addprop ;@obj; ;2E 00 11 11 00 01 | 01 | FF FF 00 00 00 00 @prop2 @prop 00 F9 59 F4 C2 00; //action
+
+setbytes str stringl ;increment sex position (affects Molly & Alison);
+setbytes obj nextobj
+setbytes prop nextprop
+posplus addprop ;@baseclass; ;@prop @header_idless | 01 01 00 00 00 @op_pushself C5 @prop_position 19 | @okay | @ret;
+setbytes prop2 nextprop
+posplus addprop ;@baseclass; ;@prop2 @header_idless | 16 00 00 | @ret;
+posplus addvoc ;posplus; ;; ;2; ;@obj; ;0;
+posplus addobject ;@obj;
+posplus addsuper ;@obj; ;@deepverb;
+posplus addprop ;@obj; ;@prop_sdesc @str;
+posplus addprop ;@obj; ;2E 00 11 11 00 01 | 01 | FF FF 00 00 00 00 @prop2 @prop 00 F9 59 F4 C2 00; //action
+
+setbytes str stringl ;decrement sex position (affects Molly & Alison);
+setbytes obj nextobj
+setbytes prop nextprop
+posminus addprop ;@baseclass; ;@prop @header_idless | 01 ff ff ff ff @op_pushself C5 @prop_position 19 | @okay | @ret;
+setbytes prop2 nextprop
+posminus addprop ;@baseclass; ;@prop2 @header_idless | 16 00 00 | @ret;
+posminus addvoc ;posminus; ;; ;2; ;@obj; ;0;
+posminus addobject ;@obj;
+posminus addsuper ;@obj; ;@deepverb;
+posminus addprop ;@obj; ;@prop_sdesc @str;
+posminus addprop ;@obj; ;2E 00 11 11 00 01 | 01 | FF FF 00 00 00 00 @prop2 @prop 00 F9 59 F4 C2 00; //action
+
+setbytes str stringl ;make next date a pub date;
+setbytes obj nextobj
+datepub addvoc ;datepub; ;; ;2; ;@obj; ;0;
+datepub addobject ;@obj;
+datepub addsuper ;@obj; ;@deepverb;
+datepub addprop ;@obj; ;@prop_sdesc @str;
+setbytes str stringl ;pub;
+datepub addprop ;@obj; ;@header_action | @op_pushstr @str @op_pushobj @me C1 @prop_currentdate 19 | @okay | @ret;
+
+setbytes str stringl ;make next date a posh restaurant date;
+setbytes obj nextobj
+dateposh addvoc ;dateposh; ;; ;2; ;@obj; ;0;
+dateposh addobject ;@obj;
+dateposh addsuper ;@obj; ;@deepverb;
+dateposh addprop ;@obj; ;@prop_sdesc @str;
+setbytes str stringl ;posh;
+dateposh addprop ;@obj; ;@header_action | @op_pushstr @str @op_pushobj @me C1 @prop_currentdate 19 | @okay | @ret;
+
+setbytes str stringl ;make next date a walk through the woods;
+setbytes obj nextobj
+datewalk addvoc ;datewalk; ;; ;2; ;@obj; ;0;
+datewalk addobject ;@obj;
+datewalk addsuper ;@obj; ;@deepverb;
+datewalk addprop ;@obj; ;@prop_sdesc @str;
+setbytes str stringl ;walk;
+datewalk addprop ;@obj; ;@header_action | @op_pushstr @str @op_pushobj @me C1 @prop_currentdate 19 | @okay | @ret;
+
+setbytes str stringl ;make next date a slushy movie;
+setbytes obj nextobj
+dateslushy addvoc ;dateslushy; ;; ;2; ;@obj; ;0;
+dateslushy addobject ;@obj;
+dateslushy addsuper ;@obj; ;@deepverb;
+dateslushy addprop ;@obj; ;@prop_sdesc @str;
+setbytes str stringl ;slushy;
+dateslushy addprop ;@obj; ;@header_action | @op_pushstr @str @op_pushobj @me C1 @prop_currentdate 19 | @okay | @ret;
+
+setbytes str stringl ;make next date a romcom movie;
+setbytes obj nextobj
+dateromcom addvoc ;dateromcom; ;; ;2; ;@obj; ;0;
+dateromcom addobject ;@obj;
+dateromcom addsuper ;@obj; ;@deepverb;
+dateromcom addprop ;@obj; ;@prop_sdesc @str;
+setbytes str stringl ;romcom;
+dateromcom addprop ;@obj; ;@header_action | @op_pushstr @str @op_pushobj @me C1 @prop_currentdate 19 | @okay | @ret;
+
+setbytes str stringl ;make next date a horror movie;
+setbytes obj nextobj
+datehorror addvoc ;datehorror; ;; ;2; ;@obj; ;0;
+datehorror addobject ;@obj;
+datehorror addsuper ;@obj; ;@deepverb;
+datehorror addprop ;@obj; ;@prop_sdesc @str;
+setbytes str stringl ;horror;
+datehorror addprop ;@obj; ;@header_action | @op_pushstr @str @op_pushobj @me C1 @prop_currentdate 19 | @okay | @ret;
+
+setbytes str stringl ;make next date a porno movie;
+setbytes obj nextobj
+dateporno addvoc ;dateporno; ;; ;2; ;@obj; ;0;
+dateporno addobject ;@obj;
+dateporno addsuper ;@obj; ;@deepverb;
+dateporno addprop ;@obj; ;@prop_sdesc @str;
+setbytes str stringl ;porno;
+dateporno addprop ;@obj; ;@header_action | @op_pushstr @str @op_pushobj @me C1 @prop_currentdate 19 | @okay | @ret;
+
+//Note: the cheats to change current date have less effect than might be expected, and the results are buggy
+	setbytes str stringl ;make current date molly;
+	setbytes obj nextobj
+	datemolly addvoc ;datemolly; ;; ;2; ;@obj; ;0;
+	datemolly addobject ;@obj;
+	datemolly addsuper ;@obj; ;@deepverb;
+	datemolly addprop ;@obj; ;@prop_sdesc @str;;
+	datemolly addprop ;@obj; ;@header_action | @op_pushobj @molly @op_pushobj @me C1 @prop_date 19 | @okay | @ret;
+
+	setbytes str stringl ;make current date becky;
+	setbytes obj nextobj
+	datebecky addvoc ;datebecky; ;; ;2; ;@obj; ;0;
+	datebecky addobject ;@obj;
+	datebecky addsuper ;@obj; ;@deepverb;
+	datebecky addprop ;@obj; ;@prop_sdesc @str;;
+	datebecky addprop ;@obj; ;@header_action | @op_pushobj @becky @op_pushobj @me C1 @prop_date 19 | @okay | @ret;
+
+	setbytes str stringl ;make current date alison;
+	setbytes obj nextobj
+	datealison addvoc ;datealison; ;; ;2; ;@obj; ;0;
+	datealison addobject ;@obj;
+	datealison addsuper ;@obj; ;@deepverb;
+	datealison addprop ;@obj; ;@prop_sdesc @str;;
+	datealison addprop ;@obj; ;@header_action | @op_pushobj @alison @op_pushobj @me C1 @prop_date 19 | @okay | @ret;
+
+	setbytes str stringl ;make current date melissa;
+	setbytes obj nextobj
+	datemelissa addvoc ;datemelissa; ;; ;2; ;@obj; ;0;
+	datemelissa addobject ;@obj;
+	datemelissa addsuper ;@obj; ;@deepverb;
+	datemelissa addprop ;@obj; ;@prop_sdesc @str;;
+	datemelissa addprop ;@obj; ;@header_action | @op_pushobj @melissa @op_pushobj @me C1 @prop_date 19 | @okay | @ret;
+
+setbytes str stringl ;make everyone choose dares;
+setbytes obj nextobj
+daring addvoc ;daring; ;; ;2; ;@obj; ;0;
+daring addobject ;@obj;
+daring addsuper ;@obj; ;@deepverb;
+daring addprop ;@obj; ;@prop_sdesc @str;
+daring addprop ;@obj; ;@header_action | 01 00 00 00 00 02 @obj_todanswers C1 @prop_melanswerchance 19 | 01 00 00 00 00 02 @obj_todanswers C1 @prop_beckyanswerchance 19 | 01 00 00 00 00 02 @obj_todanswers C1 @prop_mollyanswerchance 19 | 01 00 00 00 00 02 @obj_todanswers C1 @prop_alisonanswerchance 19 | 01 00 00 00 00 02 @obj_todanswers C1 @prop_mikeanswerchance 19 | 01 00 00 00 00 02 @obj_todanswers C1 @prop_garyanswerchance 19 | @okay | @ret;
+
+setbytes str stringl ;make everyone choose truth;
+setbytes obj nextobj
+truthful addvoc ;truthful; ;; ;2; ;@obj; ;0;
+truthful addobject ;@obj;
+truthful addsuper ;@obj; ;@deepverb;
+truthful addprop ;@obj; ;@prop_sdesc @str;
+truthful addprop ;@obj; ;@header_action | 01 64 00 00 00 02 @obj_todanswers C1 @prop_melanswerchance 19 | 01 64 00 00 00 02 @obj_todanswers C1 @prop_beckyanswerchance 19 | 01 64 00 00 00 02 @obj_todanswers C1 @prop_mollyanswerchance 19 | 01 64 00 00 00 02 @obj_todanswers C1 @prop_alisonanswerchance 19 | 01 64 00 00 00 02 @obj_todanswers C1 @prop_mikeanswerchance 19 | 01 64 00 00 00 02 @obj_todanswers C1 @prop_garyanswerchance 19 | @okay | @ret;
+
+setbytes str stringl ;skip to the sexy dares;
+setbytes obj nextobj
+sexydares addvoc ;sexydares; ;; ;2; ;@obj; ;0;
+sexydares addobject ;@obj;
+sexydares addsuper ;@obj; ;@deepverb;
+sexydares addprop ;@obj; ;@prop_sdesc @str;
+sexydares addprop ;@obj; ;@header_action | 01 15 00 00 00 02 @obj_party C1 @prop_partyscriptNum 19 | @okay | @ret;
+
+setbytes str stringl ;make spin the bottle;
+setbytes obj nextobj
+setbytes prop nextprop
+spinbottle addprop ;@baseclass; ;@prop @header_idless | @op_pushself @op_pushobj @obj_truthordare C1 @prop_asker 19 | 3e 00 @obj_truthordare @prop_todscript 19 | @ret;
+setbytes prop2 nextprop
+spinbottle addprop ;@baseclass; ;@prop2 @header_idless | 16 00 00 | @ret;
+spinbottle addvoc ;spinbottle; ;; ;2; ;@obj; ;0;
+spinbottle addobject ;@obj;
+spinbottle addsuper ;@obj; ;@deepverb;
+spinbottle addprop ;@obj; ;@prop_sdesc @str;
+spinbottle addprop ;@obj; ;2E 00 11 11 00 01 | 01 | FF FF 00 00 00 00 @prop2 @prop 00 F9 59 F4 C2 00; //action
+
+setbytes objF nextobj
+fspinbottle addvoc ;fspinbottle; ;; ;2; ;@objF; ;0;
+fspinbottle addobject ;@objF;
+fspinbottle addsuper ;@objF; ;@deepverb;
+fspinbottle addprop ;@objF; ;@prop_sdesc @str;
+fspinbottle addprop ;@objF; ;2E 00 11 11 00 01 | 01 | FF FF 00 00 00 00 @prop2 @prop 00 F9 59 F4 C2 00; //action
+fspinbottle addprop ;@objF; ;15 00 06 00 00 01 | 4D 03 18 00 00 | 22 17 03 00;
+fspinbottle addprop ;@objF; ;20 00 06 00 00 01 | 4D 03 18 00 00 | 21 17 03 00;
+
+//Allow spinbottleD to alter randgirl and randguy results:
+setbytes prop_force_rand_person nextprop
+setbytes prop_rand_person nextprop
+garbage prependpropcode @prop_randguy ;3e 00 @me @prop_force_rand_person @op_jf &label_unforced | 3e 00 @me @prop_rand_person @op_pushself C1 @prop_chosenguy | 16 00 00 | *label_unforced 19;
+garbage prependpropcode @prop_randgirl ;3e 00 @me @prop_force_rand_person @op_jf &label_unforced | 3e 00 @me @prop_rand_person @op_pushself C1 @prop_chosengirl | 16 00 00 | *label_unforced 19;
+setbytes prop_force_picka_person nextprop
+setbytes prop_picka_person nextprop
+garbage prependpropcode @prop_pickaguy ;3e 00 @me @prop_force_picka_person @op_jf &label_unforced | 3e 00 @me @prop_picka_person @op_pushself C1 @prop_chosenguy | 16 00 00 | *label_unforced 21 19;
+garbage prependpropcode @prop_pickagirl ;3e 00 @me @prop_force_picka_person @op_jf &label_unforced | 3e 00 @me @prop_picka_person @op_pushself C1 @prop_chosengirl | 16 00 00 | *label_unforced 21 19;
+
+//TODO deleteme
+setbytes str stringl ;set spin target to;
+setbytes obj nextobj
+setbytes prop nextprop
+spintarget addprop ;@baseclass; ;@prop @header_idless | @op_pushself @op_pushobj @me C1 @prop_rand_person 19 | 22 @op_pushobj @me C1 @prop_force_rand_person 19 | @ret;
+setbytes prop2 nextprop
+spintarget addprop ;@baseclass; ;@prop2 @header_idless | 16 00 00 | @ret;
+spintarget addvoc ;spintarget; ;; ;2; ;@obj; ;0;
+spintarget addobject ;@obj;
+spintarget addsuper ;@obj; ;@deepverb;
+spintarget addprop ;@obj; ;@prop_sdesc @str;
+spintarget addprop ;@obj; ;2E 00 11 11 00 01 | 01 | FF FF 00 00 00 00 @prop2 @prop 00 F9 59 F4 C2 00; //action
+spintarget addprop ;@obj; ;15 00 06 00 00 01 | 4D 03 18 00 00 | 22 17 03 00;
+spintarget addprop ;@obj; ;20 00 06 00 00 01 | 4D 03 18 00 00 | 21 17 03 00;
+
+//TODO deleteme
+setbytes str stringl ;set spin helper to;
+setbytes obj nextobj
+setbytes prop nextprop
+spinhelper addprop ;@baseclass; ;@prop @header_idless | @op_pushself @op_pushobj @me C1 @prop_picka_person 19 | 22 @op_pushobj @me C1 @prop_force_picka_person 19 | @ret;
+setbytes prop2 nextprop
+spinhelper addprop ;@baseclass; ;@prop2 @header_idless | 16 00 00 | @ret;
+spinhelper addvoc ;spinhelper; ;; ;2; ;@obj; ;0;
+spinhelper addobject ;@obj;
+spinhelper addsuper ;@obj; ;@deepverb;
+spinhelper addprop ;@obj; ;@prop_sdesc @str;
+spinhelper addprop ;@obj; ;2E 00 11 11 00 01 | 01 | FF FF 00 00 00 00 @prop2 @prop 00 F9 59 F4 C2 00; //action
+spinhelper addprop ;@obj; ;15 00 06 00 00 01 | 4D 03 18 00 00 | 22 17 03 00;
+spinhelper addprop ;@obj; ;20 00 06 00 00 01 | 4D 03 18 00 00 | 21 17 03 00;
+
+setbytes prop_obedient nextprop
+obey prependpropcode @prop_actorAction ;3e 00 @me @prop_obedient @op_jf &label_unforced | 16 00 00 | *label_unforced 19;
+setbytes str stringl ;make everyone tend to obey commands;
+setbytes obj nextobj
+obey addvoc ;obey; ;; ;2; ;@obj; ;0;
+obey addobject ;@obj;
+obey addsuper ;@obj; ;@deepverb;
+obey addprop ; @obj; ;@prop_sdesc @str;
+obey addprop ;@obj; ;@header_action | 22 @op_pushobj @me C1 @prop_obedient 19 | @okay | @ret;
+
+setbytes str stringl ;change player character to;
+setbytes obj nextobj
+setbytes prop nextprop
+setplayer addprop ;@baseclass; ;@prop @header_idless | @op_pushself @call_parserSetMe | @ret;
+setbytes prop2 nextprop
+setplayer addprop ;@baseclass; ;@prop2 @header_idless | 16 00 00 | @ret;
+setplayer addvoc ;setplayer; ;; ;2; ;@obj; ;0;
+setplayer addobject ;@obj;
+setplayer addsuper ;@obj; ;@deepverb;
+setplayer addprop ;@obj; ;@prop_sdesc @str;
+setplayer addprop ;@obj; ;2E 00 11 11 00 01 | 01 | FF FF 00 00 00 00 @prop2 @prop 00 F9 59 F4 C2 00; //action
+
+setbytes objF nextobj
+fsetplayer addvoc ;fsetplayer; ;; ;2; ;@objF; ;0;
+fsetplayer addobject ;@objF;
+fsetplayer addsuper ;@objF; ;@deepverb;
+fsetplayer addprop ;@objF; ;@prop_sdesc @str;
+fsetplayer addprop ;@objF; ;2E 00 11 11 00 01 | 01 | FF FF 00 00 00 00 @prop2 @prop 00 F9 59 F4 C2 00; //action
+fsetplayer addprop ;@objF; ;15 00 06 00 00 01 | 4D 03 18 00 00 | 22 17 03 00;
+fsetplayer addprop ;@objF; ;20 00 06 00 00 01 | 4D 03 18 00 00 | 21 17 03 00;
+
+setbytes str stringl ;enable threesome mode;
+setbytes obj nextobj
+three addvoc ;three; ;; ;2; ;@obj; ;0;
+three addobject ;@obj;
+three addsuper ;@obj; ;@deepverb;
+three addprop ;@obj; ;@prop_sdesc @str;
+three addprop ;@obj; ;@header_action | 22 02 @becky C1 E0 03 19 22 02 @me C1 E0 03 19 22 02 @molly C1 E0 03 19 | @okay | @ret;
+
+setbytes str stringl ;disable threesome mode;
+setbytes obj nextobj
+threeoff addvoc ;threeoff; ;; ;2; ;@obj; ;0;
+threeoff addobject ;@obj;
+threeoff addsuper ;@obj; ;@deepverb;
+threeoff addprop ;@obj; ;@prop_sdesc @str;
+threeoff addprop ;@obj; ;@header_action | 21 02 @becky C1 E0 03 19 21 02 @me C1 E0 03 19 21 02 @molly C1 E0 03 19 | @okay | @ret;
+
+echo Done applying cheats.
+
+//*****************************/
+

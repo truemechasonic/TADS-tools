@@ -1,0 +1,133 @@
+#Pool Party - Cheat Patch
+
+//****** GENERAL SETUP  *********
+
+//Set separator character:
+separator ;
+
+//*****************************/
+
+
+//***** PREPARE VARIABLES ******
+
+
+//Some low-level object IDs which are unique to each game:
+//note that baseclass is set to a class which all characters & objects inherit
+setshorts baseclass 327
+setshorts deepverb 93
+
+//Prepare the IDs for properties we need
+
+//Note that these values are the same for all TADS2 games:
+setbytes prop_sdesc 08 00 09 00 00 01
+setbytes ret 0x16 00 00
+setbytes header_action 0x1f 00 06 00 00 01 0x4d 01 0x18 00 00
+setbytes header_action_loc1 0x1f 00 06 00 00 01 0x4d 01 0x18 01 00
+setbytes header_idless 06 00 00 01 0x4d 01 0x18 00 00
+setbytes header_idless_loc1 06 00 00 01 0x4d 01 0x18 01 00
+
+setbytes okay say ;Okay. ;
+
+//some useful opcodes:
+setbyte op_pushobj 02
+setbyte op_eq 0b
+setbyte op_ne 0c
+setbyte op_gt 0d
+setbyte op_ge 0e
+setbyte op_lt 0f
+setbyte op_le 10
+setbyte op_jmp 1a
+setbyte op_jf 1b
+setbyte op_pushself 1c
+setbyte op_pushstr 1f
+setbyte op_abort 2b
+setbyte op_jt 3b
+
+setbytes builtin_incturn 0x1E 00 0x17 00
+setbytes call_say 0x1e 01 00 00
+setbytes call_cvtstr 0x1e 01 07 00
+setbytes call_cvtnum 0x1e 01 08 00
+setbytes call_input 0x1E 00 0x1C 00
+setbytes setLocal1 0xC0 01 00
+setbytes pushLocal1 0x14 01 00
+
+setbytes push_a 0x1f 03 00 0x61
+setbytes push_b 0x1f 03 00 0x62
+setbytes push_c 0x1f 03 00 0x63
+setbytes push_d 0x1f 03 00 0x64
+setbytes push_e 0x1f 03 00 0x65
+setbytes push_f 0x1f 03 00 0x66
+setbytes push_g 0x1f 03 00 0x67
+setbytes push_h 0x1f 03 00 0x68
+setbytes push_i 0x1f 03 00 0x69
+setbytes push_j 0x1f 03 00 0x6a
+setbytes push_k 0x1f 03 00 0x6b
+setbytes push_l 0x1f 03 00 0x6c
+setbytes push_m 0x1f 03 00 0x6d
+setbytes push_n 0x1f 03 00 0x6e
+setbytes push_o 0x1f 03 00 0x6f
+setbytes push_p 0x1f 03 00 0x70
+
+//*****************************/
+
+
+//***** MODIFY GAME CODE ******
+
+echo Applying cheats...
+
+setbytes cheathelp stringl ;steal [target], fsteal [target]<BR>\tMoves the target object into your inventory.<BR><BR>plop [target], fplop [target]<BR>\tMoves the target object to your location.<BR><BR>pause, resume<BR>\tPauses/resumes time.;
+setbytes str stringl ;cheats;
+setbytes obj nextobj
+setbytes prop nextprop
+cheats addvoc ;cheats; ;; ;2; ;@obj; ;0;
+cheats addobject ;@obj;
+cheats addsuper ;@obj; ;@deepverb;
+cheats addprop ;@obj; ;@prop_sdesc @str;
+cheats addprop ;@obj; ;@header_action | 1D @cheathelp | @ret;
+
+setbytes str stringl ;steal;
+setbytes obj nextobj
+setbytes prop nextprop
+steal addprop ;@baseclass; ;@prop @header_idless | 14 FF FF 3C 01 26 00 | @okay | @ret;
+setbytes prop2 nextprop
+steal addprop ;@baseclass; ;@prop2 @header_idless | 16 00 00 | @ret;
+steal addvoc ;steal; ;; ;2; ;@obj; ;0;
+steal addobject ;@obj;
+steal addsuper ;@obj; ;@deepverb;
+steal addprop ;@obj; ;@prop_sdesc @str;
+steal addprop ;@obj; ;2E 00 11 11 00 01 | 01 | FF FF 00 00 00 00 @prop2 @prop 00 F9 59 F4 C2 00; //action
+
+setbytes objF nextobj
+fsteal addvoc ;fsteal; ;; ;2; ;@objF; ;0;
+fsteal addobject ;@objF;
+fsteal addsuper ;@objF; ;@deepverb;
+fsteal addprop ;@objF; ;@prop_sdesc @str;
+fsteal addprop ;@objF; ;2E 00 11 11 00 01 | 01 | FF FF 00 00 00 00 @prop2 @prop 00 F9 59 F4 C2 00; //action
+fsteal addprop ;@objF; ;15 00 06 00 00 01 | 4D 03 18 00 00 | 22 17 03 00;
+fsteal addprop ;@objF; ;20 00 06 00 00 01 | 4D 03 18 00 00 | 21 17 03 00;
+
+setbytes str stringl ;plop;
+setbytes obj nextobj
+setbytes prop nextprop
+plop addprop ;@baseclass; ;@prop @header_idless | 14 FF FF 12 00 0d 00 3C 01 26 00 | @okay | @ret;
+setbytes prop2 nextprop
+plop addprop ;@baseclass; ;@prop2 @header_idless | 16 00 00 | @ret;
+plop addvoc ;plop; ;; ;2; ;@obj; ;0;
+plop addobject ;@obj;
+plop addsuper ;@obj; ;@deepverb;
+plop addprop ;@obj; ;@prop_sdesc @str;
+plop addprop ;@obj; ;2E 00 11 11 00 01 | 01 | FF FF 00 00 00 00 @prop2 @prop 00 F9 59 F4 C2 00; //action
+
+setbytes objF nextobj
+fplop addvoc ;fplop; ;; ;2; ;@objF; ;0;
+fplop addobject ;@objF;
+fplop addsuper ;@objF; ;@deepverb;
+fplop addprop ;@objF; ;@prop_sdesc @str;
+fplop addprop ;@objF; ;2E 00 11 11 00 01 | 01 | FF FF 00 00 00 00 @prop2 @prop 00 F9 59 F4 C2 00; //action
+fplop addprop ;@objF; ;15 00 06 00 00 01 | 4D 03 18 00 00 | 22 17 03 00;
+fplop addprop ;@objF; ;20 00 06 00 00 01 | 4D 03 18 00 00 | 21 17 03 00;
+
+echo Done applying cheats.
+
+//*****************************/
+

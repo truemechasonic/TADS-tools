@@ -1,0 +1,7 @@
+#replace ’ with ' so scads2 stops whining
+
+//Set separator character:
+separator ;
+
+//Adjust by-line:
+1 replacestring ;\’; ;';

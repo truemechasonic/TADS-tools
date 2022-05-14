@@ -1,0 +1,6 @@
+#School Dreams 3 - Bugfix & Cheat Patch
+echo --------
+!include sd3.patch
+echo --------
+!include sd3cheat.patch
+echo --------

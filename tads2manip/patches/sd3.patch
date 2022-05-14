@@ -1,0 +1,248 @@
+#School Dreams 3 - Bugfix Patch
+
+//Set separator character:
+separator ;
+
+echo Checking game version...
+
+//Assertions
+set assert1 hasString ;School Dreams 3: School Dreams Forever;
+@!assert1 echo Error: Selected game is not SD3.
+@!assert1 abort
+set assert2 hasString ;truemechasonic;
+@assert2 echo Error: Bugfix patch must be applied to unpatched game.
+@assert2 abort
+
+//Set variables for patches:
+set fixTypos true
+set textonly hascode ;3E 00 42 00 E4 03;
+@textonly echo Detected text-only version of SD3. That's fine, I guess.
+@!textonly setbyte global 18
+@textonly setbyte global 19
+@!textonly setbyte timing 62
+@textonly setbyte timing 69 
+@!textonly setbyte me 41
+@textonly setbyte me 42
+@!textonly setbyte ali 59
+@textonly setbyte ali 60
+@!textonly setbyte mol 57
+@textonly setbyte mol 5e
+@!textonly setbyte beck 4c
+@textonly setbyte beck 53
+@!textonly setbyte mol_d2 e1
+@textonly setbyte mol_d2 f2
+@!textonly setbyte head 58
+@textonly setbyte head 5f
+@!textonly setbyte holl 91
+@textonly setbyte holl 98
+@!textonly setbyte beck_puss 7a
+@textonly setbyte beck_puss 81
+@!textonly setbyte ali_jeans 17
+@textonly setbyte ali_jeans 3f
+@!textonly setbyte kirstyroom_low 94
+@textonly setbyte kirstyroom_low 9b
+setbyte kirstyroom_high 01
+setbyte prop_busy_low fe
+setbyte prop_busy_high 03
+setbyte prop_secluded_low 0b
+setbyte prop_secluded_high 04
+
+
+echo Fixing bugs...
+
+//Main patches:
+
+//Adjust by-line:
+0a replacestring ;Version 1.0; ;Version 1.0<br>Unofficial Patch v2.00 by truemechasonic;
+0b setyear 2016
+
+//Check if Alison Angel point should be rewarded after seeing each pic:
+1 insertcodeafter ; 22 02 @me 00 C1 E7 03 19; ;3E 00 @me 00 E4 03;
+2 insertcodeafter ; 22 02 @me 00 C1 E8 03 19; ;3E 00 @me 00 E4 03;
+3 insertcodeafter ; 22 02 @me 00 C1 E9 03 19; ;3E 00 @me 00 E4 03;
+4 insertcodeafter ; 22 02 @me 00 C1 EA 03 19; ;3E 00 @me 00 E4 03;
+5 insertcodeafter ; 22 02 @me 00 C1 EB 03 19; ;3E 00 @me 00 E4 03;
+6 insertcodeafter ; 22 02 @me 00 C1 EC 03 19; ;3E 00 @me 00 E4 03;
+7 insertcodeafter ; 22 02 @me 00 C1 ED 03 19; ;3E 00 @me 00 E4 03;
+8 insertcodeafter ; 22 02 @me 00 C1 EE 03 19; ;3E 00 @me 00 E4 03;
+9 insertcodeafter ; 22 02 @me 00 C1 EF 03 19; ;3E 00 @me 00 E4 03;
+10 insertcodeafter ; 22 02 @me 00 C1 f0 03 19; ;3E 00 @me 00 E4 03;
+
+//Use correct prop for seeing Alison Angel magazine pic:
+11 replacepropuse 998 1523
+
+//Let Alison give oral after saying she can (behind gym):
+12 insertcodeafter ;1D 50 01 41 6C 69 73 6F 6E 27 73 20 63 6C 65 76 65 72 20 6C 69 74 74 6C 65 20 68 61 6E 64 73 20 73 6C 69 64 65 20 75 70 20 61 6E 64 20 64 6F 77 6E 20 79 6F 75 72 20 74 68 69 63 6B 20 73 68 61 66 74 2C 20 6D 61 73 73 61 67 69 6E 67 20 61 6E 64 20 77 6F 72 6B 69 6E 67 20 79 6F 75 72 20 63 6F 63 6B 20 77 69 74 68 20 61 20 73 6B 69 6C 6C 20 74 68 61 74 20 73 75 72 70 72 69 73 65 73 20 79 6F 75 2E 20 43 6C 65 61 72 6C 79 20 79 6F 75 20 61 72 65 20 6E 6F 74 20 68 65 72 20 66 69 72 73 74 20 68 61 6E 64 20 6A 6F 62 2C 20 61 6E 64 20 6A 75 64 67 69 6E 67 20 62 79 20 68 65 72 20 68 75 6E 67 72 79 20 73 6D 69 6C 65 20 79 6F 75 20 77 69 6C 6C 20 6E 6F 74 20 62 65 20 74 68 65 20 6C 61 73 74 2E 3C 42 52 3E 3C 42 52 3E 20 22 59 6F 75 20 6B 6E 6F 77 2C 20 79 6F 75 20 63 61 6E 20 70 75 74 20 69 74 20 69 6E 20 6D 79 20 6D 6F 75 74 68 20 69 66 20 79 6F 75 20 77 61 6E 74 2C 22 20 73 68 65 20 77 68 69 73 70 65 72 73 2C 20 68 65 72 20 68 61 6E 64 20 73 74 72 6F 6B 69 6E 67 20 79 6F 75 72 20 65 72 65 63 74 69 6F 6E 2E; ;22 02 @ali 01 C1 01 04 19;
+
+//Removed Molly from classroom when she and Gary leave the classroom:
+13 insertcodeafter ;21 3E 01 @mol_d2 01 26 00 19; ;21 3E 01 @mol 01 26 00 19;
+
+//Prevent Molly from choosing herself as a dare target:
+14 insertcodeafter ;3C 00 d7 07; ;02 @mol 01 3C 00 AD 07 0B 1b 14 00 02 @mol 01 3C 00 a4 07 0B 1b 09 00 3C 00 d7 07 1a f0 ff 01 00 00 00 00;
+
+//Mrs. Stevens bonus point requires all of her daydreams:
+15 replacecode ;3E 00 @me 00 63 03 01 07 00 00 00 0D; data 1 ;01 08 00 00 00;
+
+//Prevent repeatedly changing Molly's love level by leaving and reentering woods during walk:
+setbytes entered_woods nextprop
+16 insertcodeafter ;1D 4A 00 20 66 6F 6C 6C 6F 77 73 20 79 6F 75 20 61 6C 6F 6E 67 20 74 68 65 20 70 61 74 68 20 69 6E 74 6F 20 74 68 65 20 73 65 6D 69 2D 64 61 72 6B 6E 65 73 73 20 6F 66 20 74 68 65 20 77 6F 6F 64 73 2E 3C 42 52 3E 3C 42 52 3E 19 3E 00 @mol 01 0D 00 3E 00 @me 00 0D 00 0B 1B F4 01; ;22 02 @me 00 C1 @entered_woods 19;
+17 insertcodeafter ;1D 4A 00 20 66 6F 6C 6C 6F 77 73 20 79 6F 75 20 61 6C 6F 6E 67 20 74 68 65 20 70 61 74 68 20 69 6E 74 6F 20 74 68 65 20 73 65 6D 69 2D 64 61 72 6B 6E 65 73 73 20 6F 66 20 74 68 65 20 77 6F 6F 64 73 2E 3C 42 52 3E 3C 42 52 3E 19 3E 00 @mol 01 0D 00 3E 00 @me 00 0D 00 0B; ; 3e 00 @me 00 @entered_woods 0b 04;
+17b insertcodeafter ;22 02 @me 00 c1 c5 04 19; ;21 02 @me 00 C1 @entered_woods 19;
+18 insertcodeafter ;22 02 @head 01 C1 aa 03 19; ;21 02 @me 00 C1 @entered_woods 19;
+
+//If player leaves Alison's room without carrying through on blackmail, don't make her tell Molly & Becky:
+19 replacecode ;1D 2A 01 22 49 20 64 65 63 69 64 65 64 20 49 20 70 72 6F 62 61 62 6C 79 20 73 68 6F 75 6C 64 6E 27 74 20 75 73 65 20 69 74 20 74 6F 20 62 6C 61 63 6B 6D 61 69 6C 20 79 6F 75 20 69 6E 74 6F 20 66 75 63 6B 69 6E 67 20 6D 65 20 61 67 61 69 6E 2E 20 49 20 74 68 69 6E 6B 20 79 6F 75 27 76 65 20 62 65 65 6E 20 74 68 72 6F 75 67 68 20 65 6E 6F 75 67 68 2E 22 3C 42 52 3E 3C 42 52 3E 20 41 6C 69 73 6F 6E 20 6C 6F 6F 6B 73 20 75 70 20 61 74 20 79 6F 75 20 77 69 74 68 20 73 6F 6D 65 74 68 69 6E 67 20 61 6B 69 6E 20 74 6F 20 67 72 61 74 69 74 75 64 65 20 69 6E 20 68 65 72 20 65 79 65 73 2E 20 22 54 68 61 6E 6B 20 79 6F 75 2C 22 20 73 68 65 20 6D 75 74 74 65 72 73 2E 20 22 49 20 77 6F 6E 27 74 20 73 65 6E 64 20 74 68 65 20 70 69 63 74 75 72 65 73 20 6F 66 20 79 6F 75 20 61 6E 64 20 6D 65 20 74 6F 20 4D 6F 6C 6C 79 20 6F 72 20 42 65 63 6B 79 20 74 68 65 6E 2C 20 49 20 73 75 70 70 6F 73 65 2E 22 20 22 02 @mol 01 C1 57 05 19 22 02 @beck 01 C1 57 05 19 22; data 1 ;21 02 @mol 01 C1 57 05 19 21 02 @beck 01 C1 57 05 19 21;
+
+//Let player masturbate through clothes in Kirsty's room, allowing some unique dialogue to be reached.
+20 insertcodeafter ;1D 7D 00 2C 20 77 68 61 74 20 61 72 65 20 79 6F 75 20 64 6F 69 6E 67 3F 22 20 4D 6F 6C 6C 79 20 67 61 73 70 73 2C 20 68 65 72 20 66 61 63 65 20 66 6C 75 73 68 69 6E 67 20 72 65 64 2E 3C 42 52 3E 3C 42 52 3E 20 22 4F 68 20 73 6F 72 72 79 2C 22 20 79 6F 75 20 6D 75 74 74 65 72 2E 20 22 55 6D 6D 6D 2C 20 6A 75 73 74 20 73 63 72 61 74 63 68 69 6E 67 20 61 6E 20 69 74 63 68 2E 22 19 1A D1 00 3E 00 @holl 01 0D 00 3E 00 @me 00 0D 00 0B; ;3E 00 @me 00 0D 00 02 @kirstyroom_low @kirstyroom_high 0b 0c;
+
+//Don't allow Alison's panties to be removed at inappropriate times (e.g. in school):
+21 insertcodeafter ;3E 00 @ali 01 12 04 44 08 00 3E 00 @ali 01 58 03 04 1B 05 00 1A 02 00; ;1D 9B 00 41 6C 69 73 6F 6E 20 68 61 73 20 67 69 76 65 6E 20 79 6F 75 20 6E 6F 20 69 6E 64 69 63 61 74 69 6F 6E 20 74 68 61 74 20 73 68 65 20 77 6F 75 6C 64 20 66 69 6E 64 20 73 75 63 68 20 62 65 68 61 76 69 6F 75 72 20 74 6F 20 62 65 20 61 63 63 65 70 74 61 62 6C 65 20 6F 72 20 64 65 73 69 72 61 62 6C 65 2E 20 59 6F 75 20 74 68 69 6E 6B 20 79 6F 75 20 6E 65 65 64 20 74 6F 20 77 6F 72 6B 20 6F 6E 20 68 65 72 20 61 20 62 69 74 20 6D 6F 72 65 20 66 69 72 73 74 2E 20 3E 00 @ali_jeans 03 81 00;
+22 replacecode ;3E 00 @ali 01 12 04 44 08 00 3E 00 @ali 01 58 03 04 1B 05 00 1A 02 00 1D 9B 00 41 6C 69 73 6F 6E 20 68 61 73 20 67 69 76 65 6E 20 79 6F 75 20 6E 6F 20 69 6E 64 69 63 61 74 69 6F 6E 20 74 68 61 74 20 73 68 65 20 77 6F 75 6C 64 20 66 69 6E 64 20 73 75 63 68 20 62 65 68 61 76 69 6F 75 72 20 74 6F 20 62 65 20 61 63 63 65 70 74 61 62 6C 65 20 6F 72 20 64 65 73 69 72 61 62 6C 65 2E 20 59 6F 75 20 74 68 69 6E 6B 20 79 6F 75 20 6E 65 65 64 20 74 6F 20 77 6F 72 6B 20 6F 6E 20 68 65 72 20 61 20 62 69 74 20 6D 6F 72 65 20 66 69 72 73 74 2E 20 3E 00 @ali_jeans 03 81 00 16 00 00; shrug 4 ;1B a1 00 1A 02 00 1D 9B 00 41 6C 69 73 6F 6E 20 68 61 73 20 67 69 76 65 6E 20 79 6F 75 20 6E 6F 20 69 6E 64 69 63 61 74 69 6F 6E 20 74 68 61 74 20 73 68 65 20 77 6F 75 6C 64 20 66 69 6E 64 20 73 75 63 68 20 62 65 68 61 76 69 6F 75 72 20 74 6F 20 62 65 20 61 63 63 65 70 74 61 62 6C 65 20 6F 72 20 64 65 73 69 72 61 62 6C 65 2E 20 59 6F 75 20 74 68 69 6E 6B 20 79 6F 75 20 6E 65 65 64 20 74 6F 20 77 6F 72 6B 20 6F 6E 20 68 65 72 20 61 20 62 69 74 20 6D 6F 72 65 20 66 69 72 73 74 2E 20 3E 00 @ali_jeans 03 81 00 16 00 00;
+
+//Don't allow Alison's panties to be removed while her jeans are still worn:
+23 insertcodeafter ;1D 9B 00 41 6C 69 73 6F 6E 20 68 61 73 20 67 69 76 65 6E 20 79 6F 75 20 6E 6F 20 69 6E 64 69 63 61 74 69 6F 6E 20 74 68 61 74 20 73 68 65 20 77 6F 75 6C 64 20 66 69 6E 64 20 73 75 63 68 20 62 65 68 61 76 69 6F 75 72 20 74 6F 20 62 65 20 61 63 63 65 70 74 61 62 6C 65 20 6F 72 20 64 65 73 69 72 61 62 6C 65 2E 20 59 6F 75 20 74 68 69 6E 6B 20 79 6F 75 20 6E 65 65 64 20 74 6F 20 77 6F 72 6B 20 6F 6E 20 68 65 72 20 61 20 62 69 74 20 6D 6F 72 65 20 66 69 72 73 74 2E 20 3E 00 @ali_jeans 03 81 00; ;1b 32 00 1d 2f 00 41 6C 69 73 6F 6E 20 69 73 20 77 65 61 72 69 6E 67 20 61 20 70 61 69 72 20 6F 66 20 66 61 64 65 64 20 62 6C 75 65 20 6A 65 61 6E 73 2e 22 19;
+
+//Display correct picture if Alison's panties are removed while her corset is still worn:
+24 replacecode ;1D 80 01 22 49 20 67 75 65 73 73 20 49 20 6D 69 67 68 74 20 61 73 20 77 65 6C 6C 20 6A 75 73 74 20 74 61 6B 65 20 6D 79 20 74 6F 70 20 6F 66 66 20 61 73 20 77 65 6C 6C 2C 22 20 41 6C 69 73 6F 6E 20 6D 75 72 6D 75 72 73 2E 3C 42 52 3E 3C 42 52 3E 20 20 53 68 65 20 72 65 61 63 68 65 73 20 64 6F 77 6E 20 61 6E 64 20 71 75 69 63 6B 6C 79 20 75 6E 62 75 74 74 6F 6E 73 20 68 65 72 20 63 6F 72 73 65 74 2E 20 59 6F 75 72 20 65 79 65 73 20 77 69 64 65 6E 20 73 6C 69 67 68 74 6C 79 20 61 73 20 73 68 65 20 73 68 72 75 67 73 20 69 74 20 6F 66 66 2C 20 6C 65 74 74 69 6E 67 20 69 74 20 66 61 6C 6C 20 74 6F 20 74 68 65 20 66 6C 6F 6F 72 20 62 65 73 69 64 65 20 68 65 72 2E 20 48 65 72 20 62 72 65 61 73 74 73 20 61 72 65 20 6C 61 72 67 65 20 61 6E 64 20 72 6F 75 6E 64 2C 20 68 65 72 20 73 6B 69 6E 20 6C 69 67 68 74 6C 79 20 74 61 6E 6E 65 64 2E 20 20 48 65 72 20 70 69 6E 6B 20 6E 69 70 70 6C 65 73 20 61 72 65 20 73 6F 66 74 20 61 74 20 66 69 72 73 74 2C 20 62 75 74 20 71 75 69 63 6B 6C 79 20 68 61 72 64 65 6E 20 61 73 20 74 68 65 20 63 6F 6F 6C 65 72 20 61 69 72 20 6F 66 20 74 68 65 20 72 6F 6F 6D 20 63 61 72 65 73 73 65 73 20 74 68 65 6D 2E 3C 42 52 3E 1D 2b 00 3C 42 52 3E 3C 49 4D 47 20 73 72 63 3D 27 69 6D 61 67 65 73 2F 61 6C 69 73 6F 6E 2F 61 6C 69 75 6E 64 33 2E 6A 70 67 27 3E; ugh 1 ;1D 34 00 3C 42 52 3E 3C 49 4D 47 20 73 72 63 3D 27 69 6D 61 67 65 73 2F 61 6C 69 73 6F 6E 2F 61 6C 69 73 6F 6E 63 6F 72 73 65 74 6F 6E 6C 79 2E 6A 70 67 27 3E;
+
+//Make Becky leave for school at the correct time on days 2-4:
+25 insertcodeafter ;3E 00 @global 00 8B 00 | 01 0A 00 00 00 | 0B; ;01 0A 00 00 00 | 0B;
+26 replacecode ;3E 00 @global 00 8B 00 | 01 0A 00 00 00 | 0B; hmm 1 ;3e 00 @timing 01 c9 03 | 06;
+
+//Prevent issues from relationship values going above 5:
+27 replacecode ;3E 00 @mol 01 A0 03 01 05 00 00 00 0B; blah 2 ;0e;
+28 replacecode ;3E 00 @beck 01 A0 03 01 05 00 00 00 0B; blah 2 ;0e;
+
+//Make Becky realize you went to school without her if you reach school before she does:
+29 replacecode ;22 | 02 @head 01 | C1 BE 03 | 19 | 21 | 3E 01 @beck 01 26 00 | 19 | 22; hahaha 7 ;21;
+30 insertcodeafter ;1D 0D 00 66 6F 72 20 6C 75 6E 63 68 2E 20; ;22 02 @beck 01 C1 19 04 19; //after "for lunch. "
+
+//Fix issues with the command "Becky, fuck me" during closet scene:
+31 insertcodeafter ;14 FF FF 12 00 0C 03 14 FF FF C5 65 02 19; ;3E 00 @global 00 8B 00 02 @beck 01 C1 0C 04 19;
+32 insertcodeafter ;22 02 @beck 01 c1 a1 04 19; ;02 @me 00 02 @beck_puss 01 C1 64 02 19;
+
+echo Fixing typos...
+
+//Typo patches:
+@fixTypos typo1 replacestring ;\bfalls, stright, to\b; ;falls straight to;
+@fixTypos typo2 replacestring ;\bKalia.You\b; ;Kalia. You;
+@fixTypos typo3 replacestring ;\bthedogs\b; ;the dog's;
+@fixTypos typo4 replacestring ;\bactualy\b; ;actually;
+@fixTypos typo5 replacestring ;\bactully\b; ;actually;
+@fixTypos typo6 replacestring ;\bAlson's\b; ;Alison's;
+@fixTypos typo7 replacestring ;\ballweyway\b; ;alleyway;
+@fixTypos typo8 replacestring ;\bambience\b; ;ambiance;
+@fixTypos typo9 replacestring ;\banounced\b; ;announced;
+@fixTypos typo10 replacestring ;\bBcecky\b; ;Becky;
+@fixTypos typo11 replacestring ; becky; ; Becky; //Note that the extra space avoids replacing switch cases, etcetera
+@fixTypos typo12 replacestring ;\bBedky\b; ;Becky;
+@fixTypos typo13 replacestring ;\bbitternes\b; ;bitterness;
+@fixTypos typo14 replacestring ;\bblowly\b; ;blow;
+@fixTypos typo15 replacestring ;\bbreathesm\b; ;breathes,;
+@fixTypos typo16 replacestring ;\bburts\b; ;bursts;
+@fixTypos typo17 replacestring ;\bcarress\b; ;caress;
+@fixTypos typo18 replacestring ;\bcarressing\b; ;caressing;
+@fixTypos typo19 replacestring ;\bchauvanistic\b; ;chauvinistic;
+@fixTypos typo20 replacestring ;\bchinese\b; ;Chinese;
+@fixTypos typo21 replacestring ;\bclarication\b; ;clarification;
+@fixTypos typo22 replacestring ;\bclealy\b; ;clearly;
+@fixTypos typo23 replacestring ;\bcollpases\b; ;collapses;
+@fixTypos typo24 replacestring ;\bconvinved\b; ;convinced;
+@fixTypos typo25 replacestring ;\bcoridor\b; ;corridor;
+@fixTypos typo26 replacestring ;\bcoushing\b; ;coughing;
+@fixTypos typo27 replacestring ;\bcurrrently\b; ;currently;
+@fixTypos typo28 replacestring ;\bdeeeper\b; ;deeper;
+@fixTypos typo29 replacestring ;\bDeparment\b; ;Department;
+@fixTypos typo30 replacestring ;\bdesier\b; ;desire;
+@fixTypos typo31 replacestring ;\bdreampt\b; ;dreamt;
+@fixTypos typo32 replacestring ;\bembarrasing\b; ;embarrassing;
+@fixTypos typo33 replacestring ;\bembarrasment\b; ;embarrassment;
+@fixTypos typo34 replacestring ;\benought\b; ;enough;
+@fixTypos typo35 replacestring ;\benwtined\b; ;entwined;
+@fixTypos typo36 replacestring ;\bepsiode\b; ;episode;
+@fixTypos typo37 replacestring ;\bevern\b; ;even;
+@fixTypos typo38 replacestring ;\beveything\b; ;everything;
+@fixTypos typo39 replacestring ;\bexcercise\b; ;exercise;
+@fixTypos typo40 replacestring ;\bexpectd\b; ;expected;
+@fixTypos typo41 replacestring ;\bexpresion\b; ;expression;
+@fixTypos typo42 replacestring ;\bexquisiste\b; ;exquisite;
+@fixTypos typo43 replacestring ;\bextention\b; ;extension;
+@fixTypos typo44 replacestring ;\bfocussed\b; ;focused;
+@fixTypos typo45 replacestring ;\bfocusses\b; ;focuses;
+@fixTypos typo46 replacestring ;\bfocussing\b; ;focusing;
+@fixTypos typo47 replacestring ;\bfowards\b; ;forward;
+@fixTypos typo48 replacestring ;\bfucing\b; ;fucking;
+@fixTypos typo49 replacestring ;\bgutteral\b; ;guttural;
+@fixTypos typo50 replacestring ;\bherione\b; ;heroine;
+@fixTypos typo51 replacestring ;\bhorrifed\b; ;horrified;
+@fixTypos typo52 replacestring ;\bhubub\b; ;hubbub;
+@fixTypos typo53 replacestring ;\binnoncence\b; ;innocence;
+@fixTypos typo54 replacestring ;\bJapaense\b; ;Japanese;
+@fixTypos typo55 replacestring ; japanese; ; Japanese;
+@fixTypos typo56 replacestring ;\bMrs Johnsons\b; ;Mrs Johnson;
+@fixTypos typo57 replacestring ;\bjucies\b; ;juices;
+@fixTypos typo58 replacestring ;\bmagazie\b; ;magazined;
+@fixTypos typo59 replacestring ;\bmediterannean\b; ;Mediterranean;
+@fixTypos typo60 replacestring ;\bmurmers\b; ;murmurs;
+@fixTypos typo61 replacestring ;\bnto\b; ;not;
+@fixTypos typo62 replacestring ;\bpeneatration\b; ;penetration;
+@fixTypos typo63 replacestring ;\bphot\b; ;photo;
+@fixTypos typo64 replacestring ;\bphotgraph\b; ;photograph;
+@fixTypos typo65 replacestring ;\bprecide\b; ;precise;
+@fixTypos typo66 replacestring ;\bproferring\b; ;proffering;
+@fixTypos typo67 replacestring ;\boccurence\b; ;occurrence;
+@fixTypos typo68 replacestring ;\boiut\b; ;out;
+@fixTypos typo69 replacestring ;\botehr\b; ;other;
+@fixTypos typo70 replacestring ;\boutift\b; ;outfit;
+@fixTypos typo71 replacestring ;\boutine\b; ;outline;
+@fixTypos typo72 replacestring ;\boutisde\b; ;outside;
+@fixTypos typo73 replacestring ;\bqustion\b; ;question;
+@fixTypos typo74 replacestring ;\bread's\b; ;reads;
+@fixTypos typo75 replacestring ;\brememberance\b; ;remembrance;
+@fixTypos typo76 replacestring ;\broomm\b; ;room;
+@fixTypos typo77 replacestring ;\brhythym\b; ;rhythm;
+@fixTypos typo78 replacestring ;\bsatisfation\b; ;satisfaction;
+@fixTypos typo79 replacestring ;\bscren\b; ;screen;
+@fixTypos typo80 replacestring ;\bshool\b; ;school;
+@fixTypos typo81 replacestring ;\bscholgirl's\b; ;schoolgirl's;
+@fixTypos typo82 replacestring ;\bsillhouetted\b; ;silhouetted;
+@fixTypos typo83 replacestring ;\bskmpy\b; ;skimpy;
+@fixTypos typo84 replacestring ;\bslighty\b; ;slightly;
+@fixTypos typo85 replacestring ;\bsoeley\b; ;solely;
+@fixTypos typo86 replacestring ;\bspoonfull\b; ;spoonful;
+@fixTypos typo87 replacestring ;\bstrking\b; ;striking;
+@fixTypos typo88 replacestring ;\bstripey\b; ;striped;
+@fixTypos typo89 replacestring ;\bsuprisingly\b; ;surprisingly;
+@fixTypos typo90 replacestring ;\btensil\b; ;tensile;
+@fixTypos typo91 replacestring ;\bTher\b; ;This;
+@fixTypos typo92 replacestring ;\bthos\b; ;those;
+@fixTypos typo93 replacestring ;\btocome\b; ;to come;
+@fixTypos typo94 replacestring ;\bunexpectly\b; ;unexpectedly;
+@fixTypos typo95 replacestring ;\bunfocussed\b; ;unfocused;
+@fixTypos typo96 replacestring ;unneccessary; ;unnecessary;
+@fixTypos typo97 replacestring ; uppr ; ; upper ;
+@fixTypos typo98 replacestring ;vanshing; ;vanishing;
+@fixTypos typo99 replacestring ;varible; ;variable;
+@fixTypos typo100 replacestring ;\bwaitor\b; ;waiter; //TODO fix identifier nouns
+@fixTypos typo101 replacestring ;\bwaitors\b; ;waiters; //TODO fix identifier nouns
+@fixTypos typo102 replacestring ;weaing; ;wearing;
+@fixTypos typo103 replacestring ;whistful; ;wistful;
+@fixTypos typo104 replacestring ;Woah; ;Whoa;
+@fixTypos typo105 replacestring ; yout ; ; your ;
+@fixTypos typo106 replacestring ;drukn; ;drunken;
+@fixTypos typo107 replacestring ; her her ; ; hide her ;
+@fixTypos typo108 replacestring ;lusftul; ;lustful;
+@fixTypos typo109 replacestring ;spred; ;spread;
+@fixTypos typo110 replacestring ;Becky's gazed; ;Becky's gaze;
+@fixTypos typo111 replacestring ;and at cock; ;and a cock;
+@fixTypos typo112 replacestring ;flickerng; ;flickering;
+@fixTypos typo113 replacestring ;Half naked; ;Half naked!;
+@fixTypos typo114 replacestring ;guy inside you.; ;guy inside you.";
+@fixTypos typo115 replacestring ;excitment; ;excitement;
+@fixTypos typo116 replacestring ;your necky; ;your neck;
+@fixTypos typo117 replacestring ;recepticle; ;receptacle;
+@fixTypos typo118 replacestring ; miling ; ; milking ;
+//@fixTypos typo replacestring ;; ;;
+
+echo Done fixing bugs and typos.

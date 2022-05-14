@@ -1,0 +1,215 @@
+ALL ABOUT MY TADS2 PATCHES
+
+Each patch is a plain-text file containing a sequence of single-line commands.
+There are two such types of command, which I will refer to below as follows:
+	Game-commands: commands which modify the game.
+	Meta-commands: commands that do not modify the game.
+	
+Commands are probably case-sensitive. I'll try to remember to fix that later.
+
+For reasons that I swear made sense at the time, game-commands
+ all start with an arbitrary alphanumeric string your choice.
+In verbose mode, the log or command line will refer to changes by those names.
+
+Note that whenever I talk about any kind of "variables" below, I'm talking about 
+ data within the patch itself (created by meta-commands), not in-game variables.
+There are two distinct types of variables, boolean-variables and byte-variables.
+Boolean variables are true or false, byte variables hold one or more bytes.
+When I just say "variables", I'm generally referring to byte-variables.
+
+
+/****** CONDITIONALS ******/
+
+	Commands of either type can be controlled via boolean-variables.
+	For example, suppose we want to run the 'exit' command if 'good' is true:
+		@good exit
+	And suppose we want to run the 'abort' command if 'good' is false:
+		@!good abort
+
+
+/****** USING VARIABLES ETCETERA ******/
+
+	Some commands allow use of variables and some special symbols and keywords,
+	 replacing them with the appropriate byte-sequences.
+	
+	A variable is referenced with the @ symbol, i.e.:
+		@variableName
+	
+	When using branches/jumps, you can use * and & symbols to help.
+	 * followed by a label name tells the tool to remember that location.
+	 & followed by a matching label name becomes the offset of that location.
+	E.g.:
+		*location @whatever @opcodeJump &location
+	
+	The 'say' macro will produce code to make the game display a specified string, e.g.:
+		say "Hello<BR>World"
+	(This one specifically uses double-quotes. I forget whether you can use \" inside.)
+	
+	The pipe symbol | doesn't do anything. I use it to organize my code just a little.
+	
+ 
+/****** META COMMANDS *****/
+
+	[Comment]
+	This one isn't a true command, since it doesn't really affect anything.
+	Any line starting with // or # is a comment, and does nothing.
+	But if the first line starts with # then it's used as the patch's name.
+	Example:
+		#SD3 cheat patch
+		//this patch adds cheats to SD3 by Goblinboy
+
+	[Echo]
+	This command displays a message in terminal and/or GUI log.
+	Example:
+		echo Don't panic!
+		
+	[Change delimiter]
+	By default, semicolons are used as delimiters in several places.
+	But this command can change the character used for the delimiter.
+	Example:
+		separator %
+	
+	[C-Style Include]
+	This command runs another patch file, specified by filename.
+	Examples:
+		!include sd3bugFix.patch
+		!include sd3cheat.patch
+	
+	[Set Boolean]
+	This command sets a boolean-variable to true or false.
+	Recognized sub-commands:
+		hascode <hex-byte sequence> : true iff the game contains the specified code
+		hasstring <string> : true iff the game contains the specified string
+	Note that hascode allows variables etcetera.
+	Examples:
+		set game_has_whatever hascode ;3E 00 42 00 E4 03;
+		set gameSaysHello hasstring ;Hello;
+		set alwaysTrue true
+		set hasInfiniteLoop hascode ;*label @opcode_jump &label;
+	
+	[Set Bytes]
+	These commands set a variable to a sequence of bytes.
+	Variants:
+		setbytes: You enter a sequence of byte values.
+		setshorts: You enter a sequence of half-words.
+	Each byte or short is in decimal, unless it starts with 0x for hex.
+	Recognized sub-commands:
+		nextobj: If the game has N objects, this is the 2-byte value (N+1)
+				 This becomes necessary if we want to add a new object.
+		nextprop: If it had N properties, this is the 2-byte value (N+1)
+		          Next time you use nextprop, it's (N+2), etcetera.
+		idbysdesc: 2-byte value for object with matching short description.
+		           I got tired of finding all the object IDs manually, okay?!
+				   Especially for games with multiple versions!
+		say: Byte sequence corresponding to printing the given string.
+		string: Byte sequence corresponding to given string.
+		stringlen: Byte-pair/short corresponding to given string's length.
+		stringl: Byte sequence corresponding to given string and its length.
+		         This one is actually pretty useful, with how TADS2 works.
+	The above sub-commands behave identically for setbytes and setshorts.
+	Examples:
+		setbytes var 255 0xff string ;shrug;
+		setshorts var2 65535
+		setbytes var3 nextobj
+		setbytes makeGameSayHello say ;Hello; say ;Goodbye!;
+		setshorts loc_bedroom_becky idbysdesc ;Becky's bedroom;
+	
+	[Set Byte]
+	This command sets a variable's value to a single hex-byte.
+	Example:
+		setbyte maxByte FF
+	
+	[Terminate]
+	These commands halt the patch.
+	Exit is considered a success, abort is considered a failure.
+	Examples:
+		abort
+		exit
+
+
+/****** GAME COMMANDS *****/
+
+	[Set Year]
+	This command changes the year that the game thinks it was made.
+	I use this when I want to stop old save files from working.
+	Examples:
+		blahBlah setYear 2021
+	
+	[Replace String]
+	This command changes text in the game.
+	Note that it replaces ALL matching instances.
+	Examples:
+		GlubShrug replacestring ;old text; ;shiny new text!;
+	
+	[Replace Property Definition]
+	This command changes the 2-byte ID for matching properties.
+	It only changes property definitions, not references.
+	First param is old ID, second param is new ID.
+	Examples:
+		123easyAsABC replacepropdef 1024 1045
+	
+	[Replace Property Reference]
+	This command changes the 2-byte ID for matching properties.
+	It only changes property references, not definitions.
+	First param is old ID, second param is new ID.
+	Examples:
+		I_wumbo,_you_wumbo replacepropuse 1024 1045
+	
+	[Insert Code After]
+	This command inserts a sequence of bytes after matching sequences.
+	Just like the commands above, it affects ALL matching sequences.
+	Allows use of variables etc.
+	First param is code to match; second command is code to add.
+	Examples:
+		007 insertcodeafter ;21 3E 01 @mol_d2 01 26 00 19; ;21 3E 01 @mol 01 26 00 19;
+	
+	[Insert Code Before]
+	Just like the command above, but adds code before instead of after.
+	Examples:
+		blah insertcodebefore ;21 3E 01 @mol_d2 01 26 00 19; ;21 3E 01 @mol 01 26 00 19;
+	
+	[Prepend Property Code]
+	Some properties contain code instead of values.
+	This command inserts code at the start of the specified property.
+	You can use a variable to refer to the property, or a decimal half-word.
+	The code allows variables etcetera.
+	Examples:
+		trash prependpropcode ;1024; ;say "my name" say "my name";
+	
+	[Replace Code]
+	Replaces the Nth instance of matching code with different code.
+	First instance has N=0; second has N=1; etcetera.
+	Takes four params: old code, garbage, N, new code.
+	(The garbage was a placeholder for an idea I never actually implemented.
+	 Now I can't really get rid of it without losing backwards-compatibility.)
+	Examples:
+		heck replacecode ;say "my name"; qwerty 1 ;say "my name!";
+	
+	[Add Object]
+	This command adds an object with the specified short (2-byte) ID.
+		ugh addobject ;@obj;
+	
+	[Add Vocab] and [Add Super]
+	These are the commands you'll use when adding a new verb to the game.
+	Use addvocab to add a vocab entry, e.g. to tie a string to the verb's object.
+	Use addsuper to make sure the new verb's object inherits deepverb.
+	A TADS2 vocab entry has two strings, a type, a unique ID, and a flag.
+	Example:
+		setbytes obj nextobj
+		bleh addvoc ;lockpick; ;; ;2; ;@obj; ;0;
+		bleh addobject ;@obj;
+		bluh addsuper ;@obj; ;@deepverb;
+	You might also have to do other stuff for your verb; I forget how it works.
+
+	[Add Property]
+	This command adds a property to the specified object.
+	Suppose you want to add property with ID @prop to object @obj,
+	 such that it's a 0-argument function that says Hello:
+		ughh addprop addprop ;@obj; ;@prop 06 00 00 01 4d 01 18 00 00 say "Hello" 16 00 00;
+		
+	(Note to self: somehow verify that the above example actually works,
+	 because I absolutely don't remember how TADS2 function-headers work.
+	 I guess my tool replaces the first 00 00 with the actual size?
+	 What does the 4D 01 (333) mean?
+	 I think the second 00 00 was the number of args, but why the 18 (24)?)
+
